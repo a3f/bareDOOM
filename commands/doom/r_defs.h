@@ -128,7 +128,7 @@ typedef	struct
     int			linecount;
     struct line_s**	lines;	// [linecount] size
     
-} sector_t;
+} doomsector_t;
 
 
 
@@ -152,7 +152,7 @@ typedef struct
     short	midtexture;
 
     // Sector the SideDef is facing.
-    sector_t*	sector;
+    doomsector_t*	sector;
     
 } side_t;
 
@@ -200,8 +200,8 @@ typedef struct line_s
 
     // Front and back sector.
     // Note: redundant? Can be retrieved from SideDefs.
-    sector_t*	frontsector;
-    sector_t*	backsector;
+    doomsector_t*	frontsector;
+    doomsector_t*	backsector;
 
     // if == validcount, already checked
     int		validcount;
@@ -222,7 +222,7 @@ typedef struct line_s
 //
 typedef struct subsector_s
 {
-    sector_t*	sector;
+    doomsector_t*	sector;
     short	numlines;
     short	firstline;
     
@@ -248,8 +248,8 @@ typedef struct
     // Sector references.
     // Could be retrieved from linedef, too.
     // backsector is NULL for one sided lines
-    sector_t*	frontsector;
-    sector_t*	backsector;
+    doomsector_t*	frontsector;
+    doomsector_t*	backsector;
     
 } seg_t;
 
@@ -420,7 +420,7 @@ typedef struct
 //
 // Now what is a visplane, anyway?
 // 
-typedef struct
+typedef struct 
 {
   fixed_t		height;
   int			picnum;
@@ -430,19 +430,24 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  byte		pad1;
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  byte		top[SCREENWIDTH];
-  byte		pad2;
-  byte		pad3;
+  byte		top[SCREENWIDTH + 2];
   // See above.
-  byte		bottom[SCREENWIDTH];
-  byte		pad4;
+  byte		bottom[SCREENWIDTH + 2];
 
 } visplane_t;
 
+static inline byte *__top(visplane_t *plane, int idx)
+{
+	return &plane->top[idx + 1];
+}
+#define top(plane, idx) (*__top(plane, idx))
+#define bottom(plane, idx) (*__bottom(plane, idx))
 
-
+static inline byte *__bottom(visplane_t *plane, int idx)
+{
+	return &plane->bottom[idx + 1];
+}
 
 #endif

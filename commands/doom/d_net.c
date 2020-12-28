@@ -17,8 +17,6 @@
 //	all OS independend parts.
 //
 
-#include <stdlib.h>
-
 #include "doomfeatures.h"
 
 #include "d_main.h"
@@ -33,6 +31,7 @@
 #include "doomstat.h"
 #include "w_checksum.h"
 #include "w_wad.h"
+#include "d_net.h"
 
 #include "deh_main.h"
 
@@ -202,10 +201,6 @@ static void InitConnectData(net_connect_data_t *connect_data)
     // Read checksums of our WAD directory and dehacked information
 
     W_Checksum(connect_data->wad_sha1sum);
-
-#if ORIGCODE
-    DEH_Checksum(connect_data->deh_sha1sum);
-#endif
 
     // Are we playing with the Freedoom IWAD?
 

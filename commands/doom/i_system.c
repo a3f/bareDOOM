@@ -18,20 +18,13 @@
 
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-
-#include <stdarg.h>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
 #include <unistd.h>
-#endif
-
-#ifdef ORIGCODE
-#include "SDL.h"
 #endif
 
 #include "config.h"
@@ -171,7 +164,7 @@ void I_PrintBanner(char *msg)
     for (i=0; i<spaces; ++i)
         putchar(' ');
 
-    puts(msg);
+    printf("%s\n", msg);
 }
 
 void I_PrintDivider(void)
@@ -209,16 +202,7 @@ void I_PrintStartupBanner(char *gamedescription)
 
 boolean I_ConsoleStdout(void)
 {
-#ifdef _WIN32
-    // SDL "helpfully" always redirects stdout to a file.
     return 0;
-#else
-#if ORIGCODE
-    return isatty(fileno(stdout));
-#else
-	return 0;
-#endif
-#endif
 }
 
 //
@@ -256,15 +240,9 @@ void I_Quit (void)
         entry->func();
         entry = entry->next;
     }
-
-#if ORIGCODE
-    SDL_Quit();
-
-    exit(0);
-#endif
 }
 
-#if !defined(_WIN32) && !defined(__MACOSX__)
+#if !defined(_WIN32) && !defined(__MACOSX__) && !defined(__BAREBOX__)
 #define ZENITY_BINARY "/usr/bin/zenity"
 
 // returns non-zero if zenity is available
@@ -366,9 +344,7 @@ void I_Error (char *error, ...)
     if (already_quitting)
     {
         fprintf(stderr, "Warning: recursive call to I_Error detected.\n");
-#if ORIGCODE
         exit(-1);
-#endif
     }
     else
     {
@@ -448,22 +424,13 @@ void I_Error (char *error, ...)
                                         message,
                                         NULL);
     }
-#else
+#elif !defined(__BAREBOX__)
     {
         ZenityErrorBox(msgbuf);
     }
 #endif
 
-    // abort();
-#if ORIGCODE
-    SDL_Quit();
-
     exit(-1);
-#else
-    while (true)
-    {
-    }
-#endif
 }
 
 //

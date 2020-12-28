@@ -21,11 +21,6 @@
 
 #include "doomgeneric.h"
 
-#include <stdarg.h>
-//#include <sys/time.h>
-//#include <unistd.h>
-
-
 //
 // I_GetTime
 // returns time in 1/35th second tics
@@ -34,7 +29,7 @@
 static uint32_t basetime = 0;
 
 
-int I_GetTicks(void)
+static int I_GetTicks(void)
 {
 	return DG_GetTicksMs();
 }

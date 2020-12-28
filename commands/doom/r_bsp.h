@@ -25,8 +25,8 @@
 extern seg_t*		curline;
 extern side_t*		sidedef;
 extern line_t*		linedef;
-extern sector_t*	frontsector;
-extern sector_t*	backsector;
+extern doomsector_t*	frontsector;
+extern doomsector_t*	backsector;
 
 extern int		rw_x;
 extern int		rw_stopx;

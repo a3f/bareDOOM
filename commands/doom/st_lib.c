@@ -17,9 +17,6 @@
 //
 
 
-#include <stdio.h>
-#include <ctype.h>
-
 #include "deh_main.h"
 #include "doomdef.h"
 
@@ -80,7 +77,7 @@ STlib_initNum
 //  based on differences from the old number.
 // Note: worth the trouble?
 //
-void
+static void
 STlib_drawNum
 ( st_number_t*	n,
   boolean	refresh )

@@ -17,8 +17,6 @@
 //	generation of lookups, caching, retrieval by name.
 //
 
-#include <stdio.h>
-
 #include "deh_main.h"
 #include "i_swap.h"
 #include "i_system.h"
@@ -182,7 +180,7 @@ lighttable_t	*colormaps;
 // Clip and draw a column
 //  from a patch into a cached post.
 //
-void
+static void
 R_DrawColumnInCache
 ( column_t*	patch,
   byte*		cache,
@@ -223,7 +221,7 @@ R_DrawColumnInCache
 //  the composite texture is created from the patches,
 //  and each column is cached.
 //
-void R_GenerateComposite (int texnum)
+static void R_GenerateComposite (int texnum)
 {
     byte*		block;
     texture_t*		texture;
@@ -291,7 +289,7 @@ void R_GenerateComposite (int texnum)
 //
 // R_GenerateLookup
 //
-void R_GenerateLookup (int texnum)
+static void R_GenerateLookup (int texnum)
 {
     texture_t*		texture;
     byte*		patchcount;	// patchcount[texture->width]
@@ -448,7 +446,7 @@ static void GenerateTextureHashTable(void)
 // Initializes the texture list
 //  with the textures from the world map.
 //
-void R_InitTextures (void)
+static void R_InitTextures (void)
 {
     maptexture_t*	mtexture;
     texture_t*		texture;
@@ -630,7 +628,7 @@ void R_InitTextures (void)
 //
 // R_InitFlats
 //
-void R_InitFlats (void)
+static void R_InitFlats (void)
 {
     int		i;
 	
@@ -652,7 +650,7 @@ void R_InitFlats (void)
 //  so the sprite does not need to be cached completely
 //  just for having the header info ready during rendering.
 //
-void R_InitSpriteLumps (void)
+static void R_InitSpriteLumps (void)
 {
     int		i;
     patch_t	*patch;
@@ -682,7 +680,7 @@ void R_InitSpriteLumps (void)
 //
 // R_InitColormaps
 //
-void R_InitColormaps (void)
+static void R_InitColormaps (void)
 {
     int	lump;
 

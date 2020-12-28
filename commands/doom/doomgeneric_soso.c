@@ -33,36 +33,36 @@ static unsigned char convertToDoomKey(unsigned char scancode)
     {
     case 0x9C:
     case 0x1C:
-        key = KEY_ENTER;
+        key = DOOM_KEY_ENTER;
         break;
     case 0x01:
-        key = KEY_ESCAPE;
+        key = DOOM_KEY_ESCAPE;
         break;
     case 0xCB:
     case 0x4B:
-        key = KEY_LEFTARROW;
+        key = DOOM_KEY_LEFTARROW;
         break;
     case 0xCD:
     case 0x4D:
-        key = KEY_RIGHTARROW;
+        key = DOOM_KEY_RIGHTARROW;
         break;
     case 0xC8:
     case 0x48:
-        key = KEY_UPARROW;
+        key = DOOM_KEY_UPARROW;
         break;
     case 0xD0:
     case 0x50:
-        key = KEY_DOWNARROW;
+        key = DOOM_KEY_DOWNARROW;
         break;
     case 0x1D:
-        key = KEY_FIRE;
+        key = DOOM_KEY_FIRE;
         break;
     case 0x39:
-        key = KEY_USE;
+        key = DOOM_KEY_USE;
         break;
     case 0x2A:
     case 0x36:
-        key = KEY_RSHIFT;
+        key = DOOM_KEY_RSHIFT;
         break;
     case 0x15:
         key = 'y';
@@ -90,12 +90,12 @@ static void addKeyToQueue(int pressed, unsigned char keyCode)
 
 struct termios orig_termios;
 
-void disableRawMode() {
+void disableRawMode(void) {
   //printf("returning original termios\n");
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
 }
 
-void enableRawMode() {
+void enableRawMode(void) {
   tcgetattr(STDIN_FILENO, &orig_termios);
   atexit(disableRawMode);
   struct termios raw = orig_termios;
@@ -105,7 +105,7 @@ void enableRawMode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
-void DG_Init()
+static void DG_Init(void)
 {
     FrameBufferFd = open("/dev/fb0", 0);
 
@@ -153,7 +153,17 @@ void DG_Init()
     }
 }
 
-static void handleKeyInput()
+uint32_t* DG_ScreenBuffer = NULL;
+
+int DG_RunDoom(void)
+{
+    DG_Init();
+    DG_ScreenBuffer = malloc(DOOMGENERIC_RESX * DOOMGENERIC_RESY * 4);
+    D_DoomMain();
+    return 0;
+}
+
+static void handleKeyInput(void)
 {
     if (KeyboardFd < 0)
     {
@@ -181,7 +191,7 @@ static void handleKeyInput()
     }
 }
 
-void DG_DrawFrame()
+void DG_DrawFrame(void)
 {
     if (FrameBuffer)
     {

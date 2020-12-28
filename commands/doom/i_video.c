@@ -22,15 +22,13 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
-
 #include "config.h"
 #include "v_video.h"
 #include "m_argv.h"
 #include "d_event.h"
 #include "d_main.h"
 #include "i_video.h"
+#include "i_input.h"
 #include "z_zone.h"
 
 #include "tables.h"
@@ -38,42 +36,25 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
 #include "doomgeneric.h"
 
-#include <stdbool.h>
 #include <stdlib.h>
 
-#include <fcntl.h>
+struct FB_ScreenInfo s_Fb = {
+    .xres = 640,
+    .yres = 480,
+    .bits_per_pixel = 32,
 
-#include <stdarg.h>
+    .blue.length = 8,
+    .green.length = 8,
+    .red.length = 8,
+    .transp.length = 8,
 
-#include <sys/types.h>
-
-//#define CMAP256
-
-struct FB_BitField
-{
-	uint32_t offset;			/* beginning of bitfield	*/
-	uint32_t length;			/* length of bitfield		*/
+    .blue.offset = 0,
+    .green.offset = 8,
+    .red.offset = 16,
+    .transp.offset = 24,
 };
 
-struct FB_ScreenInfo
-{
-	uint32_t xres;			/* visible resolution		*/
-	uint32_t yres;
-	uint32_t xres_virtual;		/* virtual resolution		*/
-	uint32_t yres_virtual;
-
-	uint32_t bits_per_pixel;		/* guess what			*/
-	
-							/* >1 = FOURCC			*/
-	struct FB_BitField red;		/* bitfield in s_Fb mem if true color, */
-	struct FB_BitField green;	/* else only length is significant */
-	struct FB_BitField blue;
-	struct FB_BitField transp;	/* transparency			*/
-};
-
-static struct FB_ScreenInfo s_Fb;
 int fb_scaling = 1;
-int usemouse = 0;
 
 struct color {
     uint32_t b:8;
@@ -83,8 +64,6 @@ struct color {
 };
 
 static struct color colors[256];
-
-void I_GetEvent(void);
 
 // The screen buffer; this is modified to draw things to the screen
 
@@ -98,18 +77,6 @@ boolean screensaver_mode = false;
 // when the screen isnt visible, don't render the screen
 
 boolean screenvisible;
-
-// Mouse acceleration
-//
-// This emulates some of the behavior of DOS mouse drivers by increasing
-// the speed when the mouse is moved fast.
-//
-// The mouse input values are input directly to the game, but when
-// the values exceed the value of mouse_threshold, they are multiplied
-// by mouse_acceleration to increase the speed.
-
-float mouse_acceleration = 2.0;
-int mouse_threshold = 10;
 
 // Gamma correction level to use
 
@@ -126,30 +93,53 @@ typedef struct
 
 static uint16_t rgb565_palette[256];
 
-void cmap_to_rgb565(uint16_t * out, uint8_t * in, int in_pixels)
+static void memsetw(void *s, uint16_t c, size_t n)
 {
-    int i, j;
+	size_t i;
+	uint16_t* tmp = s;
+
+	for (i = 0; i < n; i++)
+		*tmp++ = c;
+}
+
+static void memsetl(void *s, uint32_t c, size_t n)
+{
+	size_t i;
+	uint32_t* tmp = s;
+
+	for (i = 0; i < n; i++)
+		*tmp++ = c;
+}
+
+__attribute__((unused))
+static void cmap_to_fb_argb32(uint8_t * out, uint8_t * in, int in_pixels)
+{
+    int i;
     struct color c;
+    uint32_t pix;
     uint16_t r, g, b;
 
     for (i = 0; i < in_pixels; i++)
     {
-        c = colors[*in]; 
-        r = ((uint16_t)(c.r >> 3)) << 11;
-        g = ((uint16_t)(c.g >> 2)) << 5;
-        b = ((uint16_t)(c.b >> 3)) << 0;
-        *out = (r | g | b);
+        c = colors[*in];  /* R:8 G:8 B:8 format! */
+        r = (uint16_t)c.r;
+        g = (uint16_t)c.g;
+        b = (uint16_t)c.b;
+        pix = r << 16;
+        pix |= g << 8;
+        pix |= b << 0;
+
+	memsetl(out, pix, 2);
+
+	out += 32 * 2 / 8;
 
         in++;
-        for (j = 0; j < fb_scaling; j++) {
-            out++;
-        }
     }
 }
 
-void cmap_to_fb(uint8_t * out, uint8_t * in, int in_pixels)
+static void cmap_to_fb_generic(uint8_t * out, uint8_t * in, int in_pixels)
 {
-    int i, j, k;
+    int i;
     struct color c;
     uint32_t pix;
     uint16_t r, g, b;
@@ -164,40 +154,34 @@ void cmap_to_fb(uint8_t * out, uint8_t * in, int in_pixels)
         pix |= g << s_Fb.green.offset;
         pix |= b << s_Fb.blue.offset;
 
-        for (k = 0; k < fb_scaling; k++) {
-            for (j = 0; j < s_Fb.bits_per_pixel/8; j++) {
-                *out = (pix >> (j*8));
-                out++;
-            }
-        }
+	switch(s_Fb.bits_per_pixel)
+	{
+	case 8:
+		memset(out, pix, fb_scaling);
+		break;
+	case 16:
+		memsetw(out, pix, fb_scaling);
+		break;
+	case 32:
+	case 24:
+		memsetl(out, pix, fb_scaling);
+		break;
+	}
+
+	out += s_Fb.bits_per_pixel * fb_scaling / 8;
+
         in++;
     }
 }
+
+void (*cmap_to_fb)(uint8_t * out, uint8_t * in, int in_pixels);
 
 void I_InitGraphics (void)
 {
     int i;
 
-	memset(&s_Fb, 0, sizeof(struct FB_ScreenInfo));
-	s_Fb.xres = DOOMGENERIC_RESX;
-	s_Fb.yres = DOOMGENERIC_RESY;
-	s_Fb.xres_virtual = s_Fb.xres;
-	s_Fb.yres_virtual = s_Fb.yres;
-	s_Fb.bits_per_pixel = 32;
-
-	s_Fb.blue.length = 8;
-	s_Fb.green.length = 8;
-	s_Fb.red.length = 8;
-	s_Fb.transp.length = 8;
-
-	s_Fb.blue.offset = 0;
-	s_Fb.green.offset = 8;
-	s_Fb.red.offset = 16;
-	s_Fb.transp.offset = 24;
-	
-
-    printf("I_InitGraphics: framebuffer: x_res: %d, y_res: %d, x_virtual: %d, y_virtual: %d, bpp: %d\n",
-            s_Fb.xres, s_Fb.yres, s_Fb.xres_virtual, s_Fb.yres_virtual, s_Fb.bits_per_pixel);
+    printf("I_InitGraphics: framebuffer: x_res: %d, y_res: %d, bpp: %d\n",
+            s_Fb.xres, s_Fb.yres, s_Fb.bits_per_pixel);
 
     printf("I_InitGraphics: framebuffer: RGBA: %d%d%d%d, red_off: %d, green_off: %d, blue_off: %d, transp_off: %d\n",
             s_Fb.red.length, s_Fb.green.length, s_Fb.blue.length, s_Fb.transp.length, s_Fb.red.offset, s_Fb.green.offset, s_Fb.blue.offset, s_Fb.transp.offset);
@@ -218,12 +202,23 @@ void I_InitGraphics (void)
     }
 
 
+#ifdef __LITTLE_ENDIAN
+    if (s_Fb.red.length == 8 && s_Fb.green.length == 8 &&
+	s_Fb.blue.length == 8 && s_Fb.red.offset == 16 &&
+	s_Fb.green.offset == 8 && s_Fb.blue.offset == 0 &&
+	s_Fb.bits_per_pixel == 32 && fb_scaling == 2)
+	    cmap_to_fb = cmap_to_fb_argb32;
+    else
+#endif
+	    cmap_to_fb = cmap_to_fb_generic;
+
+        printf("I_InitGraphics: Using: %pS\n", cmap_to_fb);
+
     /* Allocate screen to draw to */
 	I_VideoBuffer = (byte*)Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);  // For DOOM to draw on
 
 	screenvisible = true;
 
-    extern int I_InitInput(void);
     I_InitInput();
 }
 
@@ -249,6 +244,8 @@ void I_UpdateNoBlit (void)
 //
 // I_FinishUpdate
 //
+
+uint32_t* DG_ScreenBuffer;
 
 void I_FinishUpdate (void)
 {
@@ -276,16 +273,7 @@ void I_FinishUpdate (void)
         int i;
         for (i = 0; i < fb_scaling; i++) {
             line_out += x_offset;
-#ifdef CMAP256
-            for (fb_scaling == 1) {
-                memcpy(line_out, line_in, SCREENWIDTH); /* fb_width is bigger than Doom SCREENWIDTH... */
-            } else {
-                //XXX FIXME fb_scaling support!
-            }
-#else
-            //cmap_to_rgb565((void*)line_out, (void*)line_in, SCREENWIDTH);
             cmap_to_fb((void*)line_out, (void*)line_in, SCREENWIDTH);
-#endif
             line_out += (SCREENWIDTH * fb_scaling * (s_Fb.bits_per_pixel/8)) + x_offset_end;
         }
         line_in += SCREENWIDTH;

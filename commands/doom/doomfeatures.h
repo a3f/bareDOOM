@@ -33,7 +33,9 @@
 
 // Enables sound output
 
-#undef FEATURE_SOUND
+#ifdef CONFIG_SOUND
+#define FEATURE_SOUND
+#endif
 
 #endif /* #ifndef DOOM_FEATURES_H */
 

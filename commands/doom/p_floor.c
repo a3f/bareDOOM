@@ -40,7 +40,7 @@
 //
 result_e
 T_MovePlane
-( sector_t*	sector,
+( doomsector_t*	sector,
   fixed_t	speed,
   fixed_t	dest,
   boolean	crush,
@@ -255,7 +255,7 @@ EV_DoFloor
     int			secnum;
     int			rtn;
     int			i;
-    sector_t*		sec;
+    doomsector_t*		sec;
     floormove_t*	floor;
 
     secnum = -1;
@@ -453,8 +453,8 @@ EV_BuildStairs
     int			ok;
     int			rtn;
     
-    sector_t*		sec;
-    sector_t*		tsec;
+    doomsector_t*		sec;
+    doomsector_t*		tsec;
 
     floormove_t*	floor;
     

@@ -15,11 +15,7 @@
 // DESCRIPTION:  none
 //
 
-
-
-#include <string.h>
 #include <stdlib.h>
-#include <math.h>
 
 #include "doomdef.h" 
 #include "doomkeys.h"
@@ -67,6 +63,7 @@
 // SKY handling - still the wrong place.
 #include "r_data.h"
 #include "r_sky.h"
+#include "r_main.h"
 
 
 
@@ -212,34 +209,24 @@ static int      dclicktime2;
 static boolean  dclickstate2;
 static int      dclicks2;
 
-// joystick values are repeated 
+// joystick values are repeated
 static int      joyxmove;
 static int      joyymove;
 static int      joystrafemove;
-static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
-static boolean *joybuttons = &joyarray[1];		// allow [-1] 
- 
-static int      savegameslot; 
-static char     savedescription[32]; 
- 
+static boolean  joyarray[MAX_JOY_BUTTONS + 1];
+static boolean *joybuttons = &joyarray[1];		// allow [-1]
+
+static int      savegameslot;
+static char     savedescription[32];
+
 #define	BODYQUESIZE	32
 
-mobj_t*		bodyque[BODYQUESIZE]; 
-int		bodyqueslot; 
- 
+mobj_t*		bodyque[BODYQUESIZE];
+int		bodyqueslot;
+
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
- 
-int G_CmdChecksum (ticcmd_t* cmd) 
-{ 
-    size_t		i;
-    int		sum = 0; 
-	 
-    for (i=0 ; i< sizeof(*cmd)/4 - 1 ; i++) 
-	sum += ((int *)cmd)[i]; 
-		 
-    return sum; 
-} 
+
 
 static boolean WeaponSelectable(weapontype_t weapon)
 {
@@ -1032,23 +1019,10 @@ void G_Ticker (void)
 //
 
 //
-// G_InitPlayer 
-// Called at the start.
-// Called by the game initialization functions.
-//
-void G_InitPlayer (int player) 
-{
-    // clear everything else to defaults
-    G_PlayerReborn (player); 
-}
- 
- 
-
-//
 // G_PlayerFinishLevel
 // Can when a player completes a level.
 //
-void G_PlayerFinishLevel (int player) 
+static void G_PlayerFinishLevel (int player) 
 { 
     player_t*	p; 
 	 
@@ -1112,7 +1086,7 @@ void G_PlayerReborn (int player)
 //
 void P_SpawnPlayer (mapthing_t* mthing); 
  
-boolean
+static boolean
 G_CheckSpot
 ( int		playernum,
   mapthing_t*	mthing ) 
@@ -1532,7 +1506,6 @@ void G_DoWorldDone (void)
 // Can be called by the startup code or the menu task. 
 //
 extern boolean setsizeneeded;
-void R_ExecuteSetViewSize (void);
 
 char	savename[256];
 
@@ -2251,18 +2224,19 @@ boolean G_CheckDemoStatus (void)
 	 
     if (timingdemo) 
     { 
-        float fps;
+        int fps = 0;
         int realtics;
 
 	endtime = I_GetTime (); 
         realtics = endtime - starttime;
-        fps = ((float) gametic * TICRATE) / realtics;
+	if (realtics)
+		fps = (gametic * TICRATE) / realtics;
 
         // Prevent recursive calls
         timingdemo = false;
         demoplayback = false;
 
-	I_Error ("timed %i gametics in %i realtics (%f fps)",
+	I_Error ("timed %i gametics in %i realtics (%d fps)",
                  gametic, realtics, fps);
     } 
 	 

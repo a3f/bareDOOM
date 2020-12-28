@@ -15,20 +15,12 @@
 // DESCRIPTION:  none
 //
 
-#include <stdio.h>
 #include <stdlib.h>
-
-#ifdef ORIGCODE
-#include "SDL_mixer.h"
-#endif
 
 #include "config.h"
 #include "doomfeatures.h"
 #include "doomtype.h"
 
-#ifdef ORIGCODE
-#include "gusconf.h"
-#endif
 #include "i_sound.h"
 #include "i_video.h"
 #include "m_argv.h"
@@ -58,41 +50,23 @@ static sound_module_t *sound_module;
 static music_module_t *music_module;
 
 int snd_musicdevice = SNDDEVICE_SB;
-int snd_sfxdevice = SNDDEVICE_SB;
+int snd_sfxdevice = SNDDEVICE_PCSPEAKER;
 
 // Sound modules
 
-extern void I_InitTimidityConfig(void);
-extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
-extern music_module_t music_sdl_module;
-extern music_module_t music_opl_module;
 
 // For OPL module:
-
-extern int opl_io_port;
 
 // For native music module:
 
 extern char *timidity_cfg_path;
-
-// DOS-specific options: These are unused but should be maintained
-// so that the config file can be shared between chocolate
-// doom and doom.exe
-
-#if ORIGCODE
-static int snd_sbport = 0;
-static int snd_sbirq = 0;
-static int snd_sbdma = 0;
-static int snd_mport = 0;
-#endif
 
 // Compiled-in sound modules:
 
 static sound_module_t *sound_modules[] = 
 {
 #ifdef FEATURE_SOUND
-    &sound_sdl_module,
     &sound_pcsound_module,
 #endif
     NULL,
@@ -102,7 +76,7 @@ static sound_module_t *sound_modules[] =
 
 static music_module_t *music_modules[] =
 {
-#ifdef FEATURE_SOUND
+#if 0
     &music_sdl_module,
     &music_opl_module,
 #endif
@@ -230,7 +204,7 @@ void I_InitSound(boolean use_sfx_prefix)
          && (snd_musicdevice == SNDDEVICE_GENMIDI
           || snd_musicdevice == SNDDEVICE_GUS))
         {
-            I_InitTimidityConfig();
+            //I_InitTimidityConfig();
         }
 
         if (!nosfx)
@@ -437,46 +411,4 @@ boolean I_MusicIsPlaying(void)
 
 void I_BindSoundVariables(void)
 {
-#ifdef ORIGCODE
-    extern int use_libsamplerate;
-    extern float libsamplerate_scale;
-
-    M_BindVariable("snd_musicdevice",   &snd_musicdevice);
-    M_BindVariable("snd_sfxdevice",     &snd_sfxdevice);
-    M_BindVariable("snd_sbport",        &snd_sbport);
-    M_BindVariable("snd_sbirq",         &snd_sbirq);
-    M_BindVariable("snd_sbdma",         &snd_sbdma);
-    M_BindVariable("snd_mport",         &snd_mport);
-    M_BindVariable("snd_maxslicetime_ms", &snd_maxslicetime_ms);
-    M_BindVariable("snd_musiccmd",      &snd_musiccmd);
-    M_BindVariable("snd_samplerate",    &snd_samplerate);
-    M_BindVariable("snd_cachesize",     &snd_cachesize);
-    M_BindVariable("opl_io_port",       &opl_io_port);
-
-    M_BindVariable("timidity_cfg_path", &timidity_cfg_path);
-    M_BindVariable("gus_patch_path",    &gus_patch_path);
-    M_BindVariable("gus_ram_kb",        &gus_ram_kb);
-
-#ifdef FEATURE_SOUND
-    M_BindVariable("use_libsamplerate",   &use_libsamplerate);
-    M_BindVariable("libsamplerate_scale", &libsamplerate_scale);
-#endif
-
-    // Before SDL_mixer version 1.2.11, MIDI music caused the game
-    // to crash when it looped.  If this is an old SDL_mixer version,
-    // disable MIDI.
-
-#ifdef __MACOSX__
-    {
-        const SDL_version *v = Mix_Linked_Version();
-
-        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
-          < SDL_VERSIONNUM(1, 2, 11))
-        {
-            snd_musicdevice = SNDDEVICE_NONE;
-        }
-    }
-#endif
-#endif
 }
-

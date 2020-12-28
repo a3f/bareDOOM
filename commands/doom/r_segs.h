@@ -29,5 +29,9 @@ R_RenderMaskedSegRange
   int		x1,
   int		x2 );
 
+void
+R_StoreWallRange
+( int	start,
+  int	stop );
 
 #endif

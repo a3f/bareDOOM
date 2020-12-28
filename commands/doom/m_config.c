@@ -18,11 +18,8 @@
 //
 
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <errno.h>
 
 #include "config.h"
 
@@ -34,6 +31,7 @@
 #include "m_misc.h"
 
 #include "z_zone.h"
+#include "m_config.h"
 
 //
 // DEFAULTS
@@ -1578,7 +1576,7 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
 // Mapping from DOS keyboard scan code to internal key code (as defined
 // in doomkey.h). I think I (fraggle) reused this from somewhere else
 // but I can't find where. Anyway, notes:
-//  * KEY_PAUSE is wrong - it's in the KEY_NUMLOCK spot. This shouldn't
+//  * DOOM_KEY_PAUSE is wrong - it's in the DOOM_KEY_NUMLOCK spot. This shouldn't
 //    matter in terms of Vanilla compatibility because neither of
 //    those were valid for key bindings.
 //  * There is no proper scan code for PrintScreen (on DOS machines it
@@ -1588,141 +1586,33 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
 static const int scantokey[128] =
 {
     0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
-    '7',    '8',    '9',    '0',    '-',    '=',    KEY_BACKSPACE, 9,
+    '7',    '8',    '9',    '0',    '-',    '=',    DOOM_KEY_BACKSPACE, 9,
     'q',    'w',    'e',    'r',    't',    'y',    'u',    'i',
-    'o',    'p',    '[',    ']',    13,		KEY_RCTRL, 'a',    's',
+    'o',    'p',    '[',    ']',    13,		DOOM_KEY_RCTRL, 'a',    's',
     'd',    'f',    'g',    'h',    'j',    'k',    'l',    ';',
-    '\'',   '`',    KEY_RSHIFT,'\\',   'z',    'x',    'c',    'v',
-    'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,KEYP_MULTIPLY,
-    KEY_RALT,  ' ',  KEY_CAPSLOCK,KEY_F1,  KEY_F2,   KEY_F3,   KEY_F4,   KEY_F5,
-    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  /*KEY_NUMLOCK?*/KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
-    KEY_UPARROW,KEY_PGUP,KEY_MINUS,KEY_LEFTARROW,KEYP_5,KEY_RIGHTARROW,KEYP_PLUS,KEY_END,
-    KEY_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,   0,      0,      KEY_F11,
-    KEY_F12,  0,      0,      0,      0,      0,      0,      0,
+    '\'',   '`',    DOOM_KEY_RSHIFT,'\\',   'z',    'x',    'c',    'v',
+    'b',    'n',    'm',    ',',    '.',    '/',    DOOM_KEY_RSHIFT,KEYP_MULTIPLY,
+    DOOM_KEY_RALT,  ' ',  DOOM_KEY_CAPSLOCK,DOOM_KEY_F1,  DOOM_KEY_F2,   DOOM_KEY_F3,   DOOM_KEY_F4,   DOOM_KEY_F5,
+    DOOM_KEY_F6,   DOOM_KEY_F7,   DOOM_KEY_F8,   DOOM_KEY_F9,   DOOM_KEY_F10,  /*DOOM_KEY_NUMLOCK?*/DOOM_KEY_PAUSE,DOOM_KEY_SCRLCK,DOOM_KEY_HOME,
+    DOOM_KEY_UPARROW,DOOM_KEY_PGUP,DOOM_KEY_MINUS,DOOM_KEY_LEFTARROW,KEYP_5,DOOM_KEY_RIGHTARROW,KEYP_PLUS,DOOM_KEY_END,
+    DOOM_KEY_DOWNARROW,DOOM_KEY_PGDN,DOOM_KEY_INS,DOOM_KEY_DEL,0,   0,      0,      DOOM_KEY_F11,
+    DOOM_KEY_F12,  0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      KEY_PRTSCR, 0
+    0,      0,      0,      0,      0,      0,      DOOM_KEY_PRTSCR, 0
 };
 
 
 static void SaveDefaultCollection(default_collection_t *collection)
 {
-#if ORIGCODE
-    default_t *defaults;
-    int i, v;
-    FILE *f;
-	
-    f = fopen (collection->filename, "w");
-    if (!f)
-	return; // can't write the file, but don't complain
-
-    defaults = collection->defaults;
-		
-    for (i=0 ; i<collection->numdefaults ; i++)
-    {
-        int chars_written;
-
-        // Ignore unbound variables
-
-        if (!defaults[i].bound)
-        {
-            continue;
-        }
-
-        // Print the name and line up all values at 30 characters
-
-        chars_written = fprintf(f, "%s ", defaults[i].name);
-
-        for (; chars_written < 30; ++chars_written)
-            fprintf(f, " ");
-
-        // Print the value
-
-        switch (defaults[i].type) 
-        {
-            case DEFAULT_KEY:
-
-                // use the untranslated version if we can, to reduce
-                // the possibility of screwing up the user's config
-                // file
-                
-                v = * (int *) defaults[i].location;
-
-                if (v == KEY_RSHIFT)
-                {
-                    // Special case: for shift, force scan code for
-                    // right shift, as this is what Vanilla uses.
-                    // This overrides the change check below, to fix
-                    // configuration files made by old versions that
-                    // mistakenly used the scan code for left shift.
-
-                    v = 54;
-                }
-                else if (defaults[i].untranslated
-                      && v == defaults[i].original_translated)
-                {
-                    // Has not been changed since the last time we
-                    // read the config file.
-
-                    v = defaults[i].untranslated;
-                }
-                else
-                {
-                    // search for a reverse mapping back to a scancode
-                    // in the scantokey table
-
-                    int s;
-
-                    for (s=0; s<128; ++s)
-                    {
-                        if (scantokey[s] == v)
-                        {
-                            v = s;
-                            break;
-                        }
-                    }
-                }
-
-	        fprintf(f, "%i", v);
-                break;
-
-            case DEFAULT_INT:
-	        fprintf(f, "%i", * (int *) defaults[i].location);
-                break;
-
-            case DEFAULT_INT_HEX:
-	        fprintf(f, "0x%x", * (int *) defaults[i].location);
-                break;
-
-            case DEFAULT_FLOAT:
-                fprintf(f, "%f", * (float *) defaults[i].location);
-                break;
-
-            case DEFAULT_STRING:
-	        fprintf(f,"\"%s\"", * (char **) (defaults[i].location));
-                break;
-        }
-
-        fprintf(f, "\n");
-    }
-
-    fclose (f);
-#endif
 }
 
 // Parses integer values in the configuration file
 
 static int ParseIntParameter(char *strparm)
 {
-    int parm;
-
-    if (strparm[0] == '0' && strparm[1] == 'x')
-        sscanf(strparm+2, "%x", &parm);
-    else
-        sscanf(strparm, "%i", &parm);
-
-    return parm;
+	return strtol(strparm, NULL, 0);
 }
 
 static void SetVariable(default_t *def, char *value)
@@ -1763,72 +1653,13 @@ static void SetVariable(default_t *def, char *value)
             break;
 
         case DEFAULT_FLOAT:
-            * (float *) def->location = (float) atof(value);
+            printf("unsupported float config value\n");
             break;
     }
 }
 
 static void LoadDefaultCollection(default_collection_t *collection)
 {
-#if ORIGCODE
-    FILE *f;
-    default_t *def;
-    char defname[80];
-    char strparm[100];
-
-    // read the file in, overriding any set defaults
-    f = fopen(collection->filename, "r");
-
-    if (f == NULL)
-    {
-        // File not opened, but don't complain. 
-        // It's probably just the first time they ran the game.
-
-        return;
-    }
-
-    while (!feof(f))
-    {
-        if (fscanf(f, "%79s %99[^\n]\n", defname, strparm) != 2)
-        {
-            // This line doesn't match
-
-            continue;
-        }
-
-        // Find the setting in the list
-
-        def = SearchCollection(collection, defname);
-
-        if (def == NULL || !def->bound)
-        {
-            // Unknown variable?  Unbound variables are also treated
-            // as unknown.
-
-            continue;
-        }
-
-        // Strip off trailing non-printable characters (\r characters
-        // from DOS text files)
-
-        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
-        {
-            strparm[strlen(strparm)-1] = '\0';
-        }
-
-        // Surrounded by quotes? If so, remove them.
-        if (strlen(strparm) >= 2
-         && strparm[0] == '"' && strparm[strlen(strparm) - 1] == '"')
-        {
-            strparm[strlen(strparm) - 1] = '\0';
-            memmove(strparm, strparm + 1, sizeof(strparm) - 1);
-        }
-
-        SetVariable(def, strparm);
-    }
-
-    fclose (f);
-#endif
 }
 
 // Set the default filenames to use for configuration files.
@@ -2022,21 +1853,6 @@ const char *M_GetStrVariable(char *name)
     return *((const char **) variable->location);
 }
 
-float M_GetFloatVariable(char *name)
-{
-    default_t *variable;
-
-    variable = GetDefaultForName(name);
-
-    if (variable == NULL || !variable->bound
-     || variable->type != DEFAULT_FLOAT)
-    {
-        return 0;
-    }
-
-    return *((float *) variable->location);
-}
-
 // Get the path to the default configuration dir to use, if NULL
 // is passed to M_SetConfigDir.
 
@@ -2087,9 +1903,6 @@ void M_SetConfigDir(char *dir)
 char *M_GetSaveGameDir(char *iwadname)
 {
     char *savegamedir;
-#if ORIGCODE
-    char *topdir;
-#endif
 
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
@@ -2100,27 +1913,11 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-#if ORIGCODE
-        // ~/.chocolate-doom/savegames
-
-        topdir = M_StringJoin(configdir, "savegame", NULL);
-        M_MakeDirectory(topdir);
-
-        // eg. ~/.chocolate-doom/savegames/doom2.wad/
-
-        savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
-                                   DIR_SEPARATOR_S, NULL);
-
-        M_MakeDirectory(savegamedir);
-
-        free(topdir);
-#else
         savegamedir = M_StringJoin(configdir, DIR_SEPARATOR_S, ".savegame/", NULL);
 
         M_MakeDirectory(savegamedir);
 
         printf ("Using %s for savegames\n", savegamedir);
-#endif
     }
 
     return savegamedir;

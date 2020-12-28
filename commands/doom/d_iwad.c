@@ -16,9 +16,7 @@
 //     to the IWAD type.
 //
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
 
 #include "config.h"
@@ -199,7 +197,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
     // Open the key (directory where the value is stored)
 
     if (RegOpenKeyEx(reg_val->root, reg_val->path,
-                     0, KEY_READ, &key) != ERROR_SUCCESS)
+                     0, DOOM_KEY_READ, &key) != ERROR_SUCCESS)
     {
         return NULL;
     }
@@ -508,117 +506,17 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
     return mission;
 }
 
-#if ORIGCODE
-//
-// Add directories from the list in the DOOMWADPATH environment variable.
-//
-
-static void AddDoomWadPath(void)
-{
-    char *doomwadpath;
-    char *p;
-
-    // Check the DOOMWADPATH environment variable.
-
-    doomwadpath = getenv("DOOMWADPATH");
-
-    if (doomwadpath == NULL)
-    {
-        return;
-    }
-
-    doomwadpath = strdup(doomwadpath);
-
-    // Add the initial directory
-
-    AddIWADDir(doomwadpath);
-
-    // Split into individual dirs within the list.
-
-    p = doomwadpath;
-
-    for (;;)
-    {
-        p = strchr(p, PATH_SEPARATOR);
-
-        if (p != NULL)
-        {
-            // Break at the separator and store the right hand side
-            // as another iwad dir
-  
-            *p = '\0';
-            p += 1;
-
-            AddIWADDir(p);
-        }
-        else
-        {
-            break;
-        }
-    }
-}
-
-#endif
-
 //
 // Build a list of IWAD files
 //
 
 static void BuildIWADDirList(void)
 {
-#if ORIGCODE
-    char *doomwaddir;
-
-    if (iwad_dirs_built)
-    {
-        return;
-    }
-
-    // Look in the current directory.  Doom always does this.
-
-    AddIWADDir(".");
-
-    // Add DOOMWADDIR if it is in the environment
-
-    doomwaddir = getenv("DOOMWADDIR");
-
-    if (doomwaddir != NULL)
-    {
-        AddIWADDir(doomwaddir);
-    }        
-
-    // Add dirs from DOOMWADPATH
-
-    AddDoomWadPath();
-
-#ifdef _WIN32
-
-    // Search the registry and find where IWADs have been installed.
-
-    CheckUninstallStrings();
-    CheckCollectorsEdition();
-    CheckSteamEdition();
-    CheckDOSDefaults();
-
-    // Check for GUS patches installed with the BFG edition!
-
-    CheckSteamGUSPatches();
-
-#else
-
-    // Standard places where IWAD files are installed under Unix.
-
-    AddIWADDir("/usr/share/games/doom");
-    AddIWADDir("/usr/local/share/games/doom");
-
-#endif
-#else
     AddIWADDir (FILES_DIR);
 
     // Don't run this function again.
 
     iwad_dirs_built = true;
-#endif
 }
 
 //

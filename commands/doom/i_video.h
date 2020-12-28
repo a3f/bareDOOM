@@ -111,6 +111,8 @@ void I_ReadScreen (byte* scr);
 
 void I_BeginRead (void);
 
+void I_EndRead (void);
+
 void I_SetWindowTitle(char *title);
 
 void I_CheckIsScreensaver(void);
@@ -139,8 +141,6 @@ void I_EnableLoadingDisk(void);
 extern char *video_driver;
 extern boolean screenvisible;
 
-extern float mouse_acceleration;
-extern int mouse_threshold;
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
@@ -154,5 +154,27 @@ extern int aspect_ratio_correct;
 
 extern int show_diskicon;
 extern int diskicon_readbytes;
+
+struct FB_BitField
+{
+	uint32_t offset;			/* beginning of bitfield	*/
+	uint32_t length;			/* length of bitfield		*/
+};
+
+struct FB_ScreenInfo
+{
+	uint32_t xres;			/* visible resolution		*/
+	uint32_t yres;
+
+	uint32_t bits_per_pixel;		/* guess what			*/
+
+							/* >1 = FOURCC			*/
+	struct FB_BitField red;		/* bitfield in s_Fb mem if true color, */
+	struct FB_BitField green;	/* else only length is significant */
+	struct FB_BitField blue;
+	struct FB_BitField transp;	/* transparency			*/
+};
+
+extern struct FB_ScreenInfo s_Fb;
 
 #endif

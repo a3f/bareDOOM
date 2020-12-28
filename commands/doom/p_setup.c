@@ -19,8 +19,6 @@
 
 
 
-#include <math.h>
-
 #include "z_zone.h"
 
 #include "deh_main.h"
@@ -39,6 +37,7 @@
 #include "s_sound.h"
 
 #include "doomstat.h"
+#include "p_setup.h"
 
 
 void	P_SpawnMapThing (mapthing_t*	mthing);
@@ -55,7 +54,7 @@ int		numsegs;
 seg_t*		segs;
 
 int		numsectors;
-sector_t*	sectors;
+doomsector_t*	sectors;
 
 int		numsubsectors;
 subsector_t*	subsectors;
@@ -115,7 +114,7 @@ mapthing_t	playerstarts[MAXPLAYERS];
 //
 // P_LoadVertexes
 //
-void P_LoadVertexes (int lump)
+static void P_LoadVertexes (int lump)
 {
     byte*		data;
     int			i;
@@ -150,10 +149,10 @@ void P_LoadVertexes (int lump)
 //
 // GetSectorAtNullAddress
 //
-sector_t* GetSectorAtNullAddress(void)
+static doomsector_t* GetSectorAtNullAddress(void)
 {
     static boolean null_sector_is_initialized = false;
-    static sector_t null_sector;
+    static doomsector_t null_sector;
 
     if (!null_sector_is_initialized)
     {
@@ -169,7 +168,7 @@ sector_t* GetSectorAtNullAddress(void)
 //
 // P_LoadSegs
 //
-void P_LoadSegs (int lump)
+static void P_LoadSegs (int lump)
 {
     byte*		data;
     int			i;
@@ -233,7 +232,7 @@ void P_LoadSegs (int lump)
 //
 // P_LoadSubsectors
 //
-void P_LoadSubsectors (int lump)
+static void P_LoadSubsectors (int lump)
 {
     byte*		data;
     int			i;
@@ -262,16 +261,16 @@ void P_LoadSubsectors (int lump)
 //
 // P_LoadSectors
 //
-void P_LoadSectors (int lump)
+static void P_LoadSectors (int lump)
 {
     byte*		data;
     int			i;
     mapsector_t*	ms;
-    sector_t*		ss;
+    doomsector_t*		ss;
 	
     numsectors = W_LumpLength (lump) / sizeof(mapsector_t);
-    sectors = Z_Malloc (numsectors*sizeof(sector_t),PU_LEVEL,0);	
-    memset (sectors, 0, numsectors*sizeof(sector_t));
+    sectors = Z_Malloc (numsectors*sizeof(doomsector_t),PU_LEVEL,0);	
+    memset (sectors, 0, numsectors*sizeof(doomsector_t));
     data = W_CacheLumpNum (lump,PU_STATIC);
 	
     ms = (mapsector_t *)data;
@@ -295,7 +294,7 @@ void P_LoadSectors (int lump)
 //
 // P_LoadNodes
 //
-void P_LoadNodes (int lump)
+static void P_LoadNodes (int lump)
 {
     byte*	data;
     int		i;
@@ -332,7 +331,7 @@ void P_LoadNodes (int lump)
 //
 // P_LoadThings
 //
-void P_LoadThings (int lump)
+static void P_LoadThings (int lump)
 {
     byte               *data;
     int			i;
@@ -389,7 +388,7 @@ void P_LoadThings (int lump)
 // P_LoadLineDefs
 // Also counts secret lines for intermissions.
 //
-void P_LoadLineDefs (int lump)
+static void P_LoadLineDefs (int lump)
 {
     byte*		data;
     int			i;
@@ -470,7 +469,7 @@ void P_LoadLineDefs (int lump)
 //
 // P_LoadSideDefs
 //
-void P_LoadSideDefs (int lump)
+static void P_LoadSideDefs (int lump)
 {
     byte*		data;
     int			i;
@@ -501,7 +500,7 @@ void P_LoadSideDefs (int lump)
 //
 // P_LoadBlockMap
 //
-void P_LoadBlockMap (int lump)
+static void P_LoadBlockMap (int lump)
 {
     int i;
     int count;
@@ -542,13 +541,13 @@ void P_LoadBlockMap (int lump)
 // Builds sector line lists and subsector sector numbers.
 // Finds block bounding boxes for sectors.
 //
-void P_GroupLines (void)
+static void P_GroupLines (void)
 {
     line_t**		linebuffer;
     int			i;
     int			j;
     line_t*		li;
-    sector_t*		sector;
+    doomsector_t*		sector;
     subsector_t*	ss;
     seg_t*		seg;
     fixed_t		bbox[4];
@@ -748,7 +747,7 @@ P_SetupLevel
   skill_t	skill)
 {
     int		i;
-    char	lumpname[9];
+    char	lumpname[16];
     int		lumpnum;
 	
     totalkills = totalitems = totalsecret = wminfo.maxfrags = 0;
@@ -775,9 +774,9 @@ P_SetupLevel
     if ( gamemode == commercial)
     {
 	if (map<10)
-	    DEH_snprintf(lumpname, 9, "map0%i", map);
+	    DEH_snprintf(lumpname, sizeof lumpname, "map0%i", map);
 	else
-	    DEH_snprintf(lumpname, 9, "map%i", map);
+	    DEH_snprintf(lumpname, sizeof lumpname, "map%i", map);
     }
     else
     {

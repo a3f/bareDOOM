@@ -164,7 +164,7 @@ EV_DoCeiling
 {
     int		secnum;
     int		rtn;
-    sector_t*	sec;
+    doomsector_t*	sec;
     ceiling_t*	ceiling;
 	
     secnum = -1;

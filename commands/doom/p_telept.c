@@ -50,7 +50,7 @@ EV_Teleport
     mobj_t*	fog;
     unsigned	an;
     thinker_t*	thinker;
-    sector_t*	sector;
+    doomsector_t*	sector;
     fixed_t	oldx;
     fixed_t	oldy;
     fixed_t	oldz;

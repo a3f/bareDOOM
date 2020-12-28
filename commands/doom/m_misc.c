@@ -18,23 +18,12 @@
 //
 
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <io.h>
-#ifdef _MSC_VER
-#include <direct.h>
-#endif
-#else
 #include <sys/stat.h>
-#include <sys/types.h>
-#endif
 
 #include "doomtype.h"
 
@@ -189,10 +178,17 @@ char *M_TempFile(char *s)
 
 boolean M_StrToInt(const char *str, int *result)
 {
-    return sscanf(str, " 0x%x", result) == 1
-        || sscanf(str, " 0X%x", result) == 1
-        || sscanf(str, " 0%o", result) == 1
-        || sscanf(str, " %d", result) == 1;
+    if (*str && *str != ' ')
+	    return false;
+
+    str++;
+
+    if (*str < '0' || *str > '9')
+	    return false;
+
+    *result = strtol(str, NULL, 0);
+
+    return true;
 }
 
 void M_ExtractFileBase(char *path, char *dest)

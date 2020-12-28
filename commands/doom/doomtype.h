@@ -21,22 +21,6 @@
 #ifndef __DOOMTYPE__
 #define __DOOMTYPE__
 
-// #define macros to provide functions missing in Windows.
-// Outside Windows, we use strings.h for str[n]casecmp.
-
-
-#ifdef _WIN32
-
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-
-#else
-
-#include <strings.h>
-
-#endif
-
-
 //
 // The packed attribute forces structures to be packed into the minimum 
 // space necessary.  If this is not done, the compiler may align structure
@@ -62,7 +46,7 @@
 
 #include <inttypes.h>
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 
 // Use builtin bool type with C++.
 
@@ -70,12 +54,14 @@ typedef bool boolean;
 
 #else
 
-typedef enum 
-{
-    false	= 0,
-    true	= 1,
-	undef	= 0xFFFFFFFF
-} boolean;
+typedef int boolean;
+
+#ifndef false
+#define false 0
+#endif
+#ifndef true
+#define true 1
+#endif
 
 #endif
 

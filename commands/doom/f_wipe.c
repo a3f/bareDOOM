@@ -18,12 +18,12 @@
 
 #include <string.h>
 
+#include "doomtype.h"
+
 #include "z_zone.h"
 #include "i_video.h"
 #include "v_video.h"
 #include "m_random.h"
-
-#include "doomtype.h"
 
 #include "f_wipe.h"
 
@@ -39,7 +39,7 @@ static byte*	wipe_scr_end;
 static byte*	wipe_scr;
 
 
-void
+static void
 wipe_shittyColMajorXform
 ( short*	array,
   int		width,
@@ -61,7 +61,7 @@ wipe_shittyColMajorXform
 
 }
 
-int
+static int
 wipe_initColorXForm
 ( int	width,
   int	height,
@@ -71,7 +71,7 @@ wipe_initColorXForm
     return 0;
 }
 
-int
+static int
 wipe_doColorXForm
 ( int	width,
   int	height,
@@ -117,7 +117,7 @@ wipe_doColorXForm
 
 }
 
-int
+static int
 wipe_exitColorXForm
 ( int	width,
   int	height,
@@ -129,7 +129,7 @@ wipe_exitColorXForm
 
 static int*	y;
 
-int
+static int
 wipe_initMelt
 ( int	width,
   int	height,
@@ -160,7 +160,7 @@ wipe_initMelt
     return 0;
 }
 
-int
+static int
 wipe_doMelt
 ( int	width,
   int	height,
@@ -215,7 +215,7 @@ wipe_doMelt
 
 }
 
-int
+static int
 wipe_exitMelt
 ( int	width,
   int	height,

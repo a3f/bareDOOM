@@ -16,8 +16,6 @@
 //	Plats (i.e. elevator platforms) code, raising/lowering.
 //
 
-#include <stdio.h>
-
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_random.h"
@@ -134,7 +132,7 @@ EV_DoPlat
     plat_t*	plat;
     int		secnum;
     int		rtn;
-    sector_t*	sec;
+    doomsector_t*	sec;
 	
     secnum = -1;
     rtn = 0;

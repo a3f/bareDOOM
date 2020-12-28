@@ -17,7 +17,6 @@
 //
 
 
-#include <stdio.h>
 #include <ctype.h>
 
 // Functions.
@@ -28,6 +27,7 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "s_sound.h"
+#include "f_finale.h"
 
 // Data.
 #include "d_main.h"
@@ -224,7 +224,7 @@ void F_Ticker (void)
 extern	patch_t *hu_font[HU_FONTSIZE];
 
 
-void F_TextWrite (void)
+static void F_TextWrite (void)
 {
     byte*	src;
     byte*	dest;
@@ -483,7 +483,7 @@ boolean F_CastResponder (event_t* ev)
 }
 
 
-void F_CastPrint (char* text)
+static void F_CastPrint (char* text)
 {
     char*	ch;
     int		c;
@@ -568,7 +568,7 @@ void F_CastDrawer (void)
 //
 // F_DrawPatchCol
 //
-void
+static void
 F_DrawPatchCol
 ( int		x,
   patch_t*	patch,
@@ -603,7 +603,7 @@ F_DrawPatchCol
 //
 // F_BunnyScroll
 //
-void F_BunnyScroll (void)
+static void F_BunnyScroll (void)
 {
     signed int  scrolled;
     int		x;
