@@ -254,7 +254,7 @@ EV_DoDoor
   vldoor_e	type )
 {
     int		secnum,rtn;
-    sector_t*	sec;
+    doomsector_t*	sec;
     vldoor_t*	door;
 	
     secnum = -1;
@@ -339,7 +339,7 @@ EV_VerticalDoor
   mobj_t*	thing )
 {
     player_t*	player;
-    sector_t*	sec;
+    doomsector_t*	sec;
     vldoor_t*	door;
     int		side;
 	
@@ -516,7 +516,7 @@ EV_VerticalDoor
 //
 // Spawn a door that closes after 30 seconds
 //
-void P_SpawnDoorCloseIn30 (sector_t* sec)
+void P_SpawnDoorCloseIn30 (doomsector_t* sec)
 {
     vldoor_t*	door;
 	
@@ -540,7 +540,7 @@ void P_SpawnDoorCloseIn30 (sector_t* sec)
 //
 void
 P_SpawnDoorRaiseIn5Mins
-( sector_t*	sec,
+( doomsector_t*	sec,
   int		secnum )
 {
     vldoor_t*	door;
@@ -728,7 +728,7 @@ EV_SlidingDoor
 ( line_t*	line,
   mobj_t*	thing )
 {
-    sector_t*		sec;
+    doomsector_t*		sec;
     slidedoor_t*	door;
 	
     // DOOM II ONLY...

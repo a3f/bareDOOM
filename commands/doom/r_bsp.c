@@ -32,6 +32,8 @@
 // State.
 #include "doomstat.h"
 #include "r_state.h"
+#include "r_bsp.h"
+#include "r_segs.h"
 
 //#include "r_local.h"
 
@@ -40,22 +42,12 @@
 seg_t*		curline;
 side_t*		sidedef;
 line_t*		linedef;
-sector_t*	frontsector;
-sector_t*	backsector;
+doomsector_t*	frontsector;
+doomsector_t*	backsector;
 
 drawseg_t	drawsegs[MAXDRAWSEGS];
 drawseg_t*	ds_p;
 
-
-void
-R_StoreWallRange
-( int	start,
-  int	stop );
-
-
-
-
-//
 // R_ClearDrawSegs
 //
 void R_ClearDrawSegs (void)
@@ -93,7 +85,7 @@ cliprange_t	solidsegs[MAXSEGS];
 //  e.g. single sided LineDefs (middle texture)
 //  that entirely block the view.
 // 
-void
+static void
 R_ClipSolidWallSegment
 ( int			first,
   int			last )
@@ -186,7 +178,7 @@ R_ClipSolidWallSegment
 // Does handle windows,
 //  e.g. LineDefs with upper and lower texture.
 //
-void
+static void
 R_ClipPassWallSegment
 ( int	first,
   int	last )
@@ -249,7 +241,7 @@ void R_ClearClipSegs (void)
 // Clips the given segment
 // and adds any visible pieces to the line list.
 //
-void R_AddLine (seg_t*	line)
+static void R_AddLine (seg_t*	line)
 {
     int			x1;
     int			x2;
@@ -371,7 +363,7 @@ int	checkcoord[12][4] =
 };
 
 
-boolean R_CheckBBox (fixed_t*	bspcoord)
+static boolean R_CheckBBox (fixed_t*	bspcoord)
 {
     int			boxx;
     int			boxy;
@@ -487,7 +479,7 @@ boolean R_CheckBBox (fixed_t*	bspcoord)
 // Add sprites of things in sector.
 // Draw one or more line segments.
 //
-void R_Subsector (int num)
+static void R_Subsector (int num)
 {
     int			count;
     seg_t*		line;

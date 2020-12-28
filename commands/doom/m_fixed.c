@@ -25,6 +25,11 @@
 
 #include "m_fixed.h"
 
+#ifdef __BAREBOX__
+#include <linux/math64.h>
+#else
+#define div_s64(a, b) ((int64_t)(a) / (b))
+#endif
 
 
 
@@ -54,7 +59,7 @@ fixed_t FixedDiv(fixed_t a, fixed_t b)
     {
 	int64_t result;
 
-	result = ((int64_t) a << 16) / b;
+	result = div_s64((int64_t)a << 16, b);
 
 	return (fixed_t) result;
     }

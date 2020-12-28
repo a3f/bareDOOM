@@ -44,7 +44,7 @@ int		sightcounts[2];
 // P_DivlineSide
 // Returns side 0 (front), 1 (back), or 2 (on).
 //
-int
+static int
 P_DivlineSide
 ( fixed_t	x,
   fixed_t	y,
@@ -98,7 +98,7 @@ P_DivlineSide
 // along the first divline.
 // This is only called by the addthings and addlines traversers.
 //
-fixed_t
+static fixed_t
 P_InterceptVector2
 ( divline_t*	v2,
   divline_t*	v1 )
@@ -125,7 +125,7 @@ P_InterceptVector2
 // Returns true
 //  if strace crosses the given subsector successfully.
 //
-boolean P_CrossSubsector (int num)
+static boolean P_CrossSubsector (int num)
 {
     seg_t*		seg;
     line_t*		line;
@@ -133,8 +133,8 @@ boolean P_CrossSubsector (int num)
     int			s2;
     int			count;
     subsector_t*	sub;
-    sector_t*		front;
-    sector_t*		back;
+    doomsector_t*		front;
+    doomsector_t*		back;
     fixed_t		opentop;
     fixed_t		openbottom;
     divline_t		divl;
@@ -255,7 +255,7 @@ boolean P_CrossSubsector (int num)
 // Returns true
 //  if strace crosses the given node successfully.
 //
-boolean P_CrossBSPNode (int bspnum)
+static boolean P_CrossBSPNode (int bspnum)
 {
     node_t*	bsp;
     int		side;

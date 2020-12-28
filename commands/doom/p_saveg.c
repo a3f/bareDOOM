@@ -184,12 +184,12 @@ static void saveg_write_pad(void)
 
 static void *saveg_readp(void)
 {
-    return (void *) (intptr_t) saveg_read32();
+    return (void *) (uintptr_t) saveg_read32();
 }
 
 static void saveg_writep(void *p)
 {
-    saveg_write32((intptr_t) p);
+    saveg_write32((uintptr_t) p);
 }
 
 // Enum values are 32-bit integers.
@@ -915,7 +915,7 @@ static void saveg_read_ceiling_t(ceiling_t *str)
     // ceiling_e type;
     str->type = saveg_read_enum();
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     sector = saveg_read32();
     str->sector = &sectors[sector];
 
@@ -949,7 +949,7 @@ static void saveg_write_ceiling_t(ceiling_t *str)
     // ceiling_e type;
     saveg_write_enum(str->type);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     saveg_write32(str->sector - sectors);
 
     // fixed_t bottomheight;
@@ -988,7 +988,7 @@ static void saveg_read_vldoor_t(vldoor_t *str)
     // vldoor_e type;
     str->type = saveg_read_enum();
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     sector = saveg_read32();
     str->sector = &sectors[sector];
 
@@ -1016,7 +1016,7 @@ static void saveg_write_vldoor_t(vldoor_t *str)
     // vldoor_e type;
     saveg_write_enum(str->type);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     saveg_write32(str->sector - sectors);
 
     // fixed_t topheight;
@@ -1052,7 +1052,7 @@ static void saveg_read_floormove_t(floormove_t *str)
     // boolean crush;
     str->crush = saveg_read32();
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     sector = saveg_read32();
     str->sector = &sectors[sector];
 
@@ -1083,7 +1083,7 @@ static void saveg_write_floormove_t(floormove_t *str)
     // boolean crush;
     saveg_write32(str->crush);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     saveg_write32(str->sector - sectors);
 
     // int direction;
@@ -1113,7 +1113,7 @@ static void saveg_read_plat_t(plat_t *str)
     // thinker_t thinker;
     saveg_read_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     sector = saveg_read32();
     str->sector = &sectors[sector];
 
@@ -1153,7 +1153,7 @@ static void saveg_write_plat_t(plat_t *str)
     // thinker_t thinker;
     saveg_write_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     saveg_write32(str->sector - sectors);
 
     // fixed_t speed;
@@ -1198,7 +1198,7 @@ static void saveg_read_lightflash_t(lightflash_t *str)
     // thinker_t thinker;
     saveg_read_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     sector = saveg_read32();
     str->sector = &sectors[sector];
 
@@ -1223,7 +1223,7 @@ static void saveg_write_lightflash_t(lightflash_t *str)
     // thinker_t thinker;
     saveg_write_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     saveg_write32(str->sector - sectors);
 
     // int count;
@@ -1253,7 +1253,7 @@ static void saveg_read_strobe_t(strobe_t *str)
     // thinker_t thinker;
     saveg_read_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     sector = saveg_read32();
     str->sector = &sectors[sector];
 
@@ -1278,7 +1278,7 @@ static void saveg_write_strobe_t(strobe_t *str)
     // thinker_t thinker;
     saveg_write_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     saveg_write32(str->sector - sectors);
 
     // int count;
@@ -1308,7 +1308,7 @@ static void saveg_read_glow_t(glow_t *str)
     // thinker_t thinker;
     saveg_read_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     sector = saveg_read32();
     str->sector = &sectors[sector];
 
@@ -1327,7 +1327,7 @@ static void saveg_write_glow_t(glow_t *str)
     // thinker_t thinker;
     saveg_write_thinker_t(&str->thinker);
 
-    // sector_t* sector;
+    // doomsector_t* sector;
     saveg_write32(str->sector - sectors);
 
     // int minlight;
@@ -1485,7 +1485,7 @@ void P_ArchiveWorld (void)
 {
     int			i;
     int			j;
-    sector_t*		sec;
+    doomsector_t*		sec;
     line_t*		li;
     side_t*		si;
     
@@ -1533,7 +1533,7 @@ void P_UnArchiveWorld (void)
 {
     int			i;
     int			j;
-    sector_t*		sec;
+    doomsector_t*		sec;
     line_t*		li;
     side_t*		si;
     
@@ -1693,13 +1693,13 @@ enum
 //
 // Things to handle:
 //
-// T_MoveCeiling, (ceiling_t: sector_t * swizzle), - active list
-// T_VerticalDoor, (vldoor_t: sector_t * swizzle),
-// T_MoveFloor, (floormove_t: sector_t * swizzle),
-// T_LightFlash, (lightflash_t: sector_t * swizzle),
-// T_StrobeFlash, (strobe_t: sector_t *),
-// T_Glow, (glow_t: sector_t *),
-// T_PlatRaise, (plat_t: sector_t *), - active list
+// T_MoveCeiling, (ceiling_t: doomsector_t * swizzle), - active list
+// T_VerticalDoor, (vldoor_t: doomsector_t * swizzle),
+// T_MoveFloor, (floormove_t: doomsector_t * swizzle),
+// T_LightFlash, (lightflash_t: doomsector_t * swizzle),
+// T_StrobeFlash, (strobe_t: doomsector_t *),
+// T_Glow, (glow_t: doomsector_t *),
+// T_PlatRaise, (plat_t: doomsector_t *), - active list
 //
 void P_ArchiveSpecials (void)
 {

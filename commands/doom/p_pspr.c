@@ -35,6 +35,8 @@
 
 #include "p_pspr.h"
 
+#include "info.h"
+
 #define LOWERSPEED		FRACUNIT*6
 #define RAISESPEED		FRACUNIT*6
 
@@ -46,7 +48,7 @@
 //
 // P_SetPsprite
 //
-void
+static void
 P_SetPsprite
 ( player_t*	player,
   int		position,
@@ -92,41 +94,13 @@ P_SetPsprite
     // an initial state of 0 could cycle through
 }
 
-
-
-//
-// P_CalcSwing
-//	
-fixed_t		swingx;
-fixed_t		swingy;
-
-void P_CalcSwing (player_t*	player)
-{
-    fixed_t	swing;
-    int		angle;
-	
-    // OPTIMIZE: tablify this.
-    // A LUT would allow for different modes,
-    //  and add flexibility.
-
-    swing = player->bob;
-
-    angle = (FINEANGLES/70*leveltime)&FINEMASK;
-    swingx = FixedMul ( swing, finesine[angle]);
-
-    angle = (FINEANGLES/70*leveltime+FINEANGLES/2)&FINEMASK;
-    swingy = -FixedMul ( swingx, finesine[angle]);
-}
-
-
-
 //
 // P_BringUpWeapon
 // Starts bringing the pending weapon up
 // from the bottom of the screen.
 // Uses player
 //
-void P_BringUpWeapon (player_t* player)
+static void P_BringUpWeapon (player_t* player)
 {
     statenum_t	newstate;
 	
@@ -149,7 +123,7 @@ void P_BringUpWeapon (player_t* player)
 // Returns true if there is enough ammo to shoot.
 // If not, selects the next weapon to use.
 //
-boolean P_CheckAmmo (player_t* player)
+static boolean P_CheckAmmo (player_t* player)
 {
     ammotype_t		ammo;
     int			count;
@@ -234,7 +208,7 @@ boolean P_CheckAmmo (player_t* player)
 //
 // P_FireWeapon.
 //
-void P_FireWeapon (player_t* player)
+static void P_FireWeapon (player_t* player)
 {
     statenum_t	newstate;
 	
@@ -607,7 +581,7 @@ A_FirePlasma
 fixed_t		bulletslope;
 
 
-void P_BulletSlope (mobj_t*	mo)
+static void P_BulletSlope (mobj_t*	mo)
 {
     angle_t	an;
     
@@ -631,7 +605,7 @@ void P_BulletSlope (mobj_t*	mo)
 //
 // P_GunShot
 //
-void
+static void
 P_GunShot
 ( mobj_t*	mo,
   boolean	accurate )

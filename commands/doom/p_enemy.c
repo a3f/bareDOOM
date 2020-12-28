@@ -18,7 +18,6 @@
 //	that are associated with states/frames. 
 //
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "m_random.h"
@@ -38,6 +37,7 @@
 // Data.
 #include "sounds.h"
 
+#include "info.h"
 
 
 
@@ -95,14 +95,14 @@ void A_Fall (mobj_t *actor);
 
 mobj_t*		soundtarget;
 
-void
+static void
 P_RecursiveSound
-( sector_t*	sec,
+( doomsector_t*	sec,
   int		soundblocks )
 {
     int		i;
     line_t*	check;
-    sector_t*	other;
+    doomsector_t*	other;
 	
     // wake up all monsters in this sector
     if (sec->validcount == validcount
@@ -164,7 +164,7 @@ P_NoiseAlert
 //
 // P_CheckMeleeRange
 //
-boolean P_CheckMeleeRange (mobj_t*	actor)
+static boolean P_CheckMeleeRange (mobj_t*	actor)
 {
     mobj_t*	pl;
     fixed_t	dist;
@@ -187,7 +187,7 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
 //
 // P_CheckMissileRange
 //
-boolean P_CheckMissileRange (mobj_t* actor)
+static boolean P_CheckMissileRange (mobj_t* actor)
 {
     fixed_t	dist;
 	
@@ -257,7 +257,7 @@ boolean P_CheckMissileRange (mobj_t* actor)
 fixed_t	xspeed[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};
 fixed_t yspeed[8] = {0,47000,FRACUNIT,47000,0,-47000,-FRACUNIT,-47000};
 
-boolean P_Move (mobj_t*	actor)
+static boolean P_Move (mobj_t*	actor)
 {
     fixed_t	tryx;
     fixed_t	tryy;
@@ -334,7 +334,7 @@ boolean P_Move (mobj_t*	actor)
 // If a door is in the way,
 // an OpenDoor call is made to start it opening.
 //
-boolean P_TryWalk (mobj_t* actor)
+static boolean P_TryWalk (mobj_t* actor)
 {	
     if (!P_Move (actor))
     {
@@ -348,7 +348,7 @@ boolean P_TryWalk (mobj_t* actor)
 
 
 
-void P_NewChaseDir (mobj_t*	actor)
+static void P_NewChaseDir (mobj_t*	actor)
 {
     fixed_t	deltax;
     fixed_t	deltay;
@@ -483,7 +483,7 @@ void P_NewChaseDir (mobj_t*	actor)
 // If allaround is false, only look 180 degrees in front.
 // Returns true if a player is targeted.
 //
-boolean
+static boolean
 P_LookForPlayers
 ( mobj_t*	actor,
   boolean	allaround )
@@ -1111,7 +1111,7 @@ mobj_t*		vileobj;
 fixed_t		viletryx;
 fixed_t		viletryy;
 
-boolean PIT_VileCheck (mobj_t*	thing)
+static boolean PIT_VileCheck (mobj_t*	thing)
 {
     int		maxdist;
     boolean	check;
@@ -1442,7 +1442,7 @@ void A_SkullAttack (mobj_t* actor)
 // A_PainShootSkull
 // Spawn a lost soul and launch it at the target
 //
-void
+static void
 A_PainShootSkull
 ( mobj_t*	actor,
   angle_t	angle )

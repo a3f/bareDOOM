@@ -35,6 +35,8 @@ static wad_file_t *W_StdC_OpenFile(char *path)
     stdc_wad_file_t *result;
     FILE *fstream;
 
+    printf("attempting to open %s\n", path);
+
     fstream = fopen(path, "rb");
 
     if (fstream == NULL)
@@ -66,7 +68,7 @@ static void W_StdC_CloseFile(wad_file_t *wad)
 // Read data from the specified position in the file into the 
 // provided buffer.  Returns the number of bytes read.
 
-size_t W_StdC_Read(wad_file_t *wad, unsigned int offset,
+static size_t W_StdC_Read(wad_file_t *wad, unsigned int offset,
                    void *buffer, size_t buffer_len)
 {
     stdc_wad_file_t *stdc_wad;

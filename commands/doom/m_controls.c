@@ -14,44 +14,44 @@
 // GNU General Public License for more details.
 //
 
-#include <stdio.h>
 
 #include "doomtype.h"
 #include "doomkeys.h"
 
 #include "m_config.h"
 #include "m_misc.h"
+#include "m_controls.h"
 
 //
 // Keyboard controls
 //
 
-int key_right = KEY_RIGHTARROW;
-int key_left = KEY_LEFTARROW;
-int key_up = KEY_UPARROW;
-int key_down = KEY_DOWNARROW; 
-int key_strafeleft = KEY_STRAFE_L;
-int key_straferight = KEY_STRAFE_R;
-int key_fire = KEY_FIRE;
-int key_use = KEY_USE;
-int key_strafe = KEY_RALT;
-int key_speed = KEY_RSHIFT; 
+int key_right = DOOM_KEY_RIGHTARROW;
+int key_left = DOOM_KEY_LEFTARROW;
+int key_up = DOOM_KEY_UPARROW;
+int key_down = DOOM_KEY_DOWNARROW; 
+int key_strafeleft = DOOM_KEY_STRAFE_L;
+int key_straferight = DOOM_KEY_STRAFE_R;
+int key_fire = DOOM_KEY_FIRE;
+int key_use = DOOM_KEY_USE;
+int key_strafe = DOOM_KEY_RALT;
+int key_speed = DOOM_KEY_RSHIFT; 
 
 // 
 // Heretic keyboard controls
 //
  
-int key_flyup = KEY_PGUP;
-int key_flydown = KEY_INS;
-int key_flycenter = KEY_HOME;
+int key_flyup = DOOM_KEY_PGUP;
+int key_flydown = DOOM_KEY_INS;
+int key_flycenter = DOOM_KEY_HOME;
 
-int key_lookup = KEY_PGDN;
-int key_lookdown = KEY_DEL;
-int key_lookcenter = KEY_END;
+int key_lookup = DOOM_KEY_PGDN;
+int key_lookdown = DOOM_KEY_DEL;
+int key_lookcenter = DOOM_KEY_END;
 
 int key_invleft = '[';
 int key_invright = ']';
-int key_useartifact = KEY_ENTER;
+int key_useartifact = DOOM_KEY_ENTER;
 
 //
 // Hexen key controls
@@ -59,7 +59,7 @@ int key_useartifact = KEY_ENTER;
 
 int key_jump = '/';
 
-int key_arti_all             = KEY_BACKSPACE;
+int key_arti_all             = DOOM_KEY_BACKSPACE;
 int key_arti_health          = '\\';
 int key_arti_poisonbag       = '0';
 int key_arti_blastradius     = '9';
@@ -82,10 +82,10 @@ int key_invquery  = 'q';
 int key_mission   = 'w';
 int key_invpop    = 'z';
 int key_invkey    = 'k';
-int key_invhome   = KEY_HOME;
-int key_invend    = KEY_END;
-int key_invuse    = KEY_ENTER;
-int key_invdrop   = KEY_BACKSPACE;
+int key_invhome   = DOOM_KEY_HOME;
+int key_invend    = DOOM_KEY_END;
+int key_invuse    = DOOM_KEY_ENTER;
+int key_invdrop   = DOOM_KEY_BACKSPACE;
 
 
 //
@@ -107,10 +107,10 @@ int mousebprevweapon = -1;
 int mousebnextweapon = -1;
 
 
-int key_message_refresh = KEY_ENTER;
-int key_pause = KEY_PAUSE;
+int key_message_refresh = DOOM_KEY_ENTER;
+int key_pause = DOOM_KEY_PAUSE;
 int key_demo_quit = 'q';
-int key_spy = KEY_F12;
+int key_spy = DOOM_KEY_F12;
 
 // Multiplayer chat keys:
 
@@ -132,13 +132,13 @@ int key_nextweapon = 0;
 
 // Map control keys:
 
-int key_map_north     = KEY_UPARROW;
-int key_map_south     = KEY_DOWNARROW;
-int key_map_east      = KEY_RIGHTARROW;
-int key_map_west      = KEY_LEFTARROW;
+int key_map_north     = DOOM_KEY_UPARROW;
+int key_map_south     = DOOM_KEY_DOWNARROW;
+int key_map_east      = DOOM_KEY_RIGHTARROW;
+int key_map_west      = DOOM_KEY_LEFTARROW;
 int key_map_zoomin    = '=';
 int key_map_zoomout   = '-';
-int key_map_toggle    = KEY_TAB;
+int key_map_toggle    = DOOM_KEY_TAB;
 int key_map_maxzoom   = '0';
 int key_map_follow    = 'f';
 int key_map_grid      = 'g';
@@ -147,30 +147,30 @@ int key_map_clearmark = 'c';
 
 // menu keys:
 
-int key_menu_activate  = KEY_ESCAPE;
-int key_menu_up        = KEY_UPARROW;
-int key_menu_down      = KEY_DOWNARROW;
-int key_menu_left      = KEY_LEFTARROW;
-int key_menu_right     = KEY_RIGHTARROW;
-int key_menu_back      = KEY_BACKSPACE;
-int key_menu_forward   = KEY_ENTER;
+int key_menu_activate  = DOOM_KEY_ESCAPE;
+int key_menu_up        = DOOM_KEY_UPARROW;
+int key_menu_down      = DOOM_KEY_DOWNARROW;
+int key_menu_left      = DOOM_KEY_LEFTARROW;
+int key_menu_right     = DOOM_KEY_RIGHTARROW;
+int key_menu_back      = DOOM_KEY_BACKSPACE;
+int key_menu_forward   = DOOM_KEY_ENTER;
 int key_menu_confirm   = 'y';
 int key_menu_abort     = 'n';
 
-int key_menu_help      = KEY_F1;
-int key_menu_save      = KEY_F2;
-int key_menu_load      = KEY_F3;
-int key_menu_volume    = KEY_F4;
-int key_menu_detail    = KEY_F5;
-int key_menu_qsave     = KEY_F6;
-int key_menu_endgame   = KEY_F7;
-int key_menu_messages  = KEY_F8;
-int key_menu_qload     = KEY_F9;
-int key_menu_quit      = KEY_F10;
-int key_menu_gamma     = KEY_F11;
+int key_menu_help      = DOOM_KEY_F1;
+int key_menu_save      = DOOM_KEY_F2;
+int key_menu_load      = DOOM_KEY_F3;
+int key_menu_volume    = DOOM_KEY_F4;
+int key_menu_detail    = DOOM_KEY_F5;
+int key_menu_qsave     = DOOM_KEY_F6;
+int key_menu_endgame   = DOOM_KEY_F7;
+int key_menu_messages  = DOOM_KEY_F8;
+int key_menu_qload     = DOOM_KEY_F9;
+int key_menu_quit      = DOOM_KEY_F10;
+int key_menu_gamma     = DOOM_KEY_F11;
 
-int key_menu_incscreen = KEY_EQUALS;
-int key_menu_decscreen = KEY_MINUS;
+int key_menu_incscreen = DOOM_KEY_EQUALS;
+int key_menu_decscreen = DOOM_KEY_MINUS;
 int key_menu_screenshot = 0;
 
 //
@@ -276,10 +276,10 @@ void M_BindStrifeControls(void)
 
     // These keys are shared with Heretic/Hexen but have different defaults:
     key_jump     = 'a';
-    key_lookup   = KEY_PGUP;
-    key_lookdown = KEY_PGDN;
-    key_invleft  = KEY_INS;
-    key_invright = KEY_DEL;
+    key_lookup   = DOOM_KEY_PGUP;
+    key_lookdown = DOOM_KEY_PGDN;
+    key_invleft  = DOOM_KEY_INS;
+    key_invright = DOOM_KEY_DEL;
 
     M_BindVariable("key_jump",           &key_jump);
     M_BindVariable("key_lookUp",         &key_lookup);

@@ -23,6 +23,7 @@
 #include "doomdef.h"
 #include "d_event.h"
 #include "d_ticcmd.h"
+#include "doomdata.h"
 
 
 //
@@ -76,5 +77,7 @@ int G_VanillaVersionCode(void);
 
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
+
+void P_SpawnPlayer (mapthing_t* mthing);
 #endif
 

@@ -24,74 +24,74 @@
 // This is the stuff configured by Setup.Exe.
 // Most key data are simple ascii (uppercased).
 //
-#define KEY_RIGHTARROW	0xae
-#define KEY_LEFTARROW	0xac
-#define KEY_UPARROW		0xad
-#define KEY_DOWNARROW	0xaf
-#define KEY_STRAFE_L	0xa0
-#define KEY_STRAFE_R	0xa1
-#define KEY_USE			0xa2
-#define KEY_FIRE		0xa3
-#define KEY_ESCAPE		27
-#define KEY_ENTER		13
-#define KEY_TAB			9
-#define KEY_F1			(0x80+0x3b)
-#define KEY_F2			(0x80+0x3c)
-#define KEY_F3			(0x80+0x3d)
-#define KEY_F4			(0x80+0x3e)
-#define KEY_F5			(0x80+0x3f)
-#define KEY_F6			(0x80+0x40)
-#define KEY_F7			(0x80+0x41)
-#define KEY_F8			(0x80+0x42)
-#define KEY_F9			(0x80+0x43)
-#define KEY_F10			(0x80+0x44)
-#define KEY_F11			(0x80+0x57)
-#define KEY_F12			(0x80+0x58)
+#define DOOM_KEY_RIGHTARROW	0xae
+#define DOOM_KEY_LEFTARROW	0xac
+#define DOOM_KEY_UPARROW		0xad
+#define DOOM_KEY_DOWNARROW	0xaf
+#define DOOM_KEY_STRAFE_L	0xa0
+#define DOOM_KEY_STRAFE_R	0xa1
+#define DOOM_KEY_USE			0xa2
+#define DOOM_KEY_FIRE		0xa3
+#define DOOM_KEY_ESCAPE		27
+#define DOOM_KEY_ENTER		13
+#define DOOM_KEY_TAB			9
+#define DOOM_KEY_F1			(0x80+0x3b)
+#define DOOM_KEY_F2			(0x80+0x3c)
+#define DOOM_KEY_F3			(0x80+0x3d)
+#define DOOM_KEY_F4			(0x80+0x3e)
+#define DOOM_KEY_F5			(0x80+0x3f)
+#define DOOM_KEY_F6			(0x80+0x40)
+#define DOOM_KEY_F7			(0x80+0x41)
+#define DOOM_KEY_F8			(0x80+0x42)
+#define DOOM_KEY_F9			(0x80+0x43)
+#define DOOM_KEY_F10			(0x80+0x44)
+#define DOOM_KEY_F11			(0x80+0x57)
+#define DOOM_KEY_F12			(0x80+0x58)
 
-#define KEY_BACKSPACE	0x7f
-#define KEY_PAUSE	0xff
+#define DOOM_KEY_BACKSPACE	0x7f
+#define DOOM_KEY_PAUSE	0xff
 
-#define KEY_EQUALS	0x3d
-#define KEY_MINUS	0x2d
+#define DOOM_KEY_EQUALS	0x3d
+#define DOOM_KEY_MINUS	0x2d
 
-#define KEY_RSHIFT	(0x80+0x36)
-#define KEY_RCTRL	(0x80+0x1d)
-#define KEY_RALT	(0x80+0x38)
+#define DOOM_KEY_RSHIFT	(0x80+0x36)
+#define DOOM_KEY_RCTRL	(0x80+0x1d)
+#define DOOM_KEY_RALT	(0x80+0x38)
 
-#define KEY_LALT	KEY_RALT
+#define DOOM_KEY_LALT	DOOM_KEY_RALT
 
 // new keys:
 
-#define KEY_CAPSLOCK    (0x80+0x3a)
-#define KEY_NUMLOCK     (0x80+0x45)
-#define KEY_SCRLCK      (0x80+0x46)
-#define KEY_PRTSCR      (0x80+0x59)
+#define DOOM_KEY_CAPSLOCK    (0x80+0x3a)
+#define DOOM_KEY_NUMLOCK     (0x80+0x45)
+#define DOOM_KEY_SCRLCK      (0x80+0x46)
+#define DOOM_KEY_PRTSCR      (0x80+0x59)
 
-#define KEY_HOME        (0x80+0x47)
-#define KEY_END         (0x80+0x4f)
-#define KEY_PGUP        (0x80+0x49)
-#define KEY_PGDN        (0x80+0x51)
-#define KEY_INS         (0x80+0x52)
-#define KEY_DEL         (0x80+0x53)
+#define DOOM_KEY_HOME        (0x80+0x47)
+#define DOOM_KEY_END         (0x80+0x4f)
+#define DOOM_KEY_PGUP        (0x80+0x49)
+#define DOOM_KEY_PGDN        (0x80+0x51)
+#define DOOM_KEY_INS         (0x80+0x52)
+#define DOOM_KEY_DEL         (0x80+0x53)
 
 #define KEYP_0          0
-#define KEYP_1          KEY_END
-#define KEYP_2          KEY_DOWNARROW
-#define KEYP_3          KEY_PGDN
-#define KEYP_4          KEY_LEFTARROW
+#define KEYP_1          DOOM_KEY_END
+#define KEYP_2          DOOM_KEY_DOWNARROW
+#define KEYP_3          DOOM_KEY_PGDN
+#define KEYP_4          DOOM_KEY_LEFTARROW
 #define KEYP_5          '5'
-#define KEYP_6          KEY_RIGHTARROW
-#define KEYP_7          KEY_HOME
-#define KEYP_8          KEY_UPARROW
-#define KEYP_9          KEY_PGUP
+#define KEYP_6          DOOM_KEY_RIGHTARROW
+#define KEYP_7          DOOM_KEY_HOME
+#define KEYP_8          DOOM_KEY_UPARROW
+#define KEYP_9          DOOM_KEY_PGUP
 
 #define KEYP_DIVIDE     '/'
 #define KEYP_PLUS       '+'
 #define KEYP_MINUS      '-'
 #define KEYP_MULTIPLY   '*'
 #define KEYP_PERIOD     0
-#define KEYP_EQUALS     KEY_EQUALS
-#define KEYP_ENTER      KEY_ENTER
+#define KEYP_EQUALS     DOOM_KEY_EQUALS
+#define KEYP_ENTER      DOOM_KEY_ENTER
 
 #endif          // __DOOMKEYS__
 

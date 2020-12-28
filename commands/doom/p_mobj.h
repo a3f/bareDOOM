@@ -77,7 +77,7 @@
 // Every mobj_t is linked into a single sector
 // based on its origin coordinates.
 // The subsector_t is found with R_PointInSubsector(x,y),
-// and the sector_t can be found with subsector->sector.
+// and the doomsector_t can be found with subsector->sector.
 // The sector links are only used by the rendering code,
 // the play simulation does not care about them at all.
 //

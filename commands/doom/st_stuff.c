@@ -19,9 +19,6 @@
 //
 
 
-
-#include <stdio.h>
-
 #include "i_system.h"
 #include "i_video.h"
 #include "z_zone.h"
@@ -77,7 +74,7 @@
 #define ST_FACEPROBABILITY		96
 
 // For Responder
-#define ST_TOGGLECHAT		KEY_ENTER
+#define ST_TOGGLECHAT		DOOM_KEY_ENTER
 
 // Location of status bar
 #define ST_X				0
@@ -264,6 +261,7 @@ byte                   *st_backing_screen;
 	    
 // main player in game
 static player_t*	plyr; 
+int g_fps;
 
 // ST_Start() has just been called
 static boolean		st_firsttime;
@@ -411,9 +409,9 @@ cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 //
 // STATUS BAR CODE
 //
-void ST_Stop(void);
+static void ST_Stop(void);
 
-void ST_refreshBackground(void)
+static void ST_refreshBackground(void)
 {
 
     if (st_statusbaron)
@@ -662,7 +660,7 @@ ST_Responder (event_t* ev)
 
 
 
-int ST_calcPainOffset(void)
+static int ST_calcPainOffset(void)
 {
     int		health;
     static int	lastcalc;
@@ -685,7 +683,7 @@ int ST_calcPainOffset(void)
 // the precedence of expressions is:
 //  dead > evil grin > turned head > straight ahead
 //
-void ST_updateFaceWidget(void)
+static void ST_updateFaceWidget(void)
 {
     int		i;
     angle_t	badguyangle;
@@ -857,7 +855,7 @@ void ST_updateFaceWidget(void)
 
 }
 
-void ST_updateWidgets(void)
+static void ST_updateWidgets(void)
 {
     static int	largeammo = 1994; // means "n/a"
     int		i;
@@ -933,7 +931,7 @@ void ST_Ticker (void)
 
 static int st_palette = 0;
 
-void ST_doPaletteStuff(void)
+static void ST_doPaletteStuff(void)
 {
 
     int		palette;
@@ -998,7 +996,7 @@ void ST_doPaletteStuff(void)
 
 }
 
-void ST_drawWidgets(boolean refresh)
+static void ST_drawWidgets(boolean refresh)
 {
     int		i;
 
@@ -1033,7 +1031,7 @@ void ST_drawWidgets(boolean refresh)
 
 }
 
-void ST_doRefresh(void)
+static void ST_doRefresh(void)
 {
 
     st_firsttime = false;
@@ -1046,7 +1044,7 @@ void ST_doRefresh(void)
 
 }
 
-void ST_diffDraw(void)
+static void ST_diffDraw(void)
 {
     // update all widgets
     ST_drawWidgets(false);
@@ -1164,34 +1162,18 @@ static void ST_loadCallback(char *lumpname, patch_t **variable)
     *variable = W_CacheLumpName(lumpname, PU_STATIC);
 }
 
-void ST_loadGraphics(void)
+static void ST_loadGraphics(void)
 {
     ST_loadUnloadGraphics(ST_loadCallback);
 }
 
-void ST_loadData(void)
+static void ST_loadData(void)
 {
     lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
     ST_loadGraphics();
 }
 
-static void ST_unloadCallback(char *lumpname, patch_t **variable)
-{
-    W_ReleaseLumpName(lumpname);
-    *variable = NULL;
-}
-
-void ST_unloadGraphics(void)
-{
-    ST_loadUnloadGraphics(ST_unloadCallback);
-}
-
-void ST_unloadData(void)
-{
-    ST_unloadGraphics();
-}
-
-void ST_initData(void)
+static void ST_initData(void)
 {
 
     int		i;
@@ -1224,7 +1206,7 @@ void ST_initData(void)
 
 
 
-void ST_createWidgets(void)
+static void ST_createWidgets(void)
 {
 
     int i;
@@ -1290,7 +1272,7 @@ void ST_createWidgets(void)
 		      ST_ARMORX,
 		      ST_ARMORY,
 		      tallnum,
-		      &plyr->armorpoints,
+		      g_fps ? &g_fps : &plyr->armorpoints,
 		      &st_statusbaron, tallpercent);
 
     // keyboxes 0-2

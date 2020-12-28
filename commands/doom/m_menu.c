@@ -18,7 +18,6 @@
 //
 
 
-#include <stdlib.h>
 #include <ctype.h>
 
 
@@ -153,7 +152,7 @@ typedef struct menu_s
     short		numitems;	// # of menu items
     struct menu_s*	prevMenu;	// previous menu
     menuitem_t*		menuitems;	// menu items
-    void		(*routine)();	// draw routine
+    void		(*routine)(void);	// draw routine
     short		x;
     short		y;		// x,y of menu
     short		lastOn;		// last item user was on in menu
@@ -173,54 +172,50 @@ menu_t*	currentMenu;
 //
 // PROTOTYPES
 //
-void M_NewGame(int choice);
-void M_Episode(int choice);
-void M_ChooseSkill(int choice);
-void M_LoadGame(int choice);
-void M_SaveGame(int choice);
-void M_Options(int choice);
-void M_EndGame(int choice);
-void M_ReadThis(int choice);
-void M_ReadThis2(int choice);
-void M_QuitDOOM(int choice);
+static void M_NewGame(int choice);
+static void M_Episode(int choice);
+static void M_ChooseSkill(int choice);
+static void M_LoadGame(int choice);
+static void M_SaveGame(int choice);
+static void M_Options(int choice);
+static void M_EndGame(int choice);
+static void M_ReadThis(int choice);
+static void M_ReadThis2(int choice);
+static void M_QuitDOOM(int choice);
 
-void M_ChangeMessages(int choice);
-void M_ChangeSensitivity(int choice);
-void M_SfxVol(int choice);
-void M_MusicVol(int choice);
-void M_ChangeDetail(int choice);
-void M_SizeDisplay(int choice);
-void M_StartGame(int choice);
-void M_Sound(int choice);
+static void M_ChangeMessages(int choice);
+static void M_ChangeSensitivity(int choice);
+static void M_SfxVol(int choice);
+static void M_MusicVol(int choice);
+static void M_ChangeDetail(int choice);
+static void M_SizeDisplay(int choice);
+static void M_Sound(int choice);
 
-void M_FinishReadThis(int choice);
-void M_LoadSelect(int choice);
-void M_SaveSelect(int choice);
-void M_ReadSaveStrings(void);
-void M_QuickSave(void);
-void M_QuickLoad(void);
+static void M_FinishReadThis(int choice);
+static void M_LoadSelect(int choice);
+static void M_SaveSelect(int choice);
+static void M_ReadSaveStrings(void);
+static void M_QuickSave(void);
+static void M_QuickLoad(void);
 
-void M_DrawMainMenu(void);
-void M_DrawReadThis1(void);
-void M_DrawReadThis2(void);
-void M_DrawNewGame(void);
-void M_DrawEpisode(void);
-void M_DrawOptions(void);
-void M_DrawSound(void);
-void M_DrawLoad(void);
-void M_DrawSave(void);
+static void M_DrawMainMenu(void);
+static void M_DrawReadThis1(void);
+static void M_DrawReadThis2(void);
+static void M_DrawNewGame(void);
+static void M_DrawEpisode(void);
+static void M_DrawOptions(void);
+static void M_DrawSound(void);
+static void M_DrawLoad(void);
+static void M_DrawSave(void);
 
-void M_DrawSaveLoadBorder(int x,int y);
-void M_SetupNextMenu(menu_t *menudef);
-void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
-void M_DrawEmptyCell(menu_t *menu,int item);
-void M_DrawSelCell(menu_t *menu,int item);
-void M_WriteText(int x, int y, char *string);
-int  M_StringWidth(char *string);
-int  M_StringHeight(char *string);
-void M_StartMessage(char *string,void *routine,boolean input);
-void M_StopMessage(void);
-void M_ClearMenus (void);
+static void M_DrawSaveLoadBorder(int x,int y);
+static void M_SetupNextMenu(menu_t *menudef);
+static void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
+static void M_WriteText(int x, int y, char *string);
+static int  M_StringWidth(char *string);
+static int  M_StringHeight(char *string);
+static void M_StartMessage(char *string,void *routine,boolean input);
+static void M_ClearMenus (void);
 
 
 
@@ -619,7 +614,7 @@ void M_DrawSave(void)
 //
 // M_Responder calls this when user is finished
 //
-void M_DoSave(int slot)
+static void M_DoSave(int slot)
 {
     G_SaveGame (slot,savegamestrings[slot]);
     M_ClearMenus ();
@@ -669,7 +664,7 @@ void M_SaveGame (int choice)
 //
 char    tempstring[80];
 
-void M_QuickSaveResponse(int key)
+static void M_QuickSaveResponse(int key)
 {
     if (key == key_menu_confirm)
     {
@@ -706,7 +701,7 @@ void M_QuickSave(void)
 //
 // M_QuickLoad
 //
-void M_QuickLoadResponse(int key)
+static void M_QuickLoadResponse(int key)
 {
     if (key == key_menu_confirm)
     {
@@ -932,7 +927,7 @@ void M_DrawEpisode(void)
     V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_EPISOD"), PU_CACHE));
 }
 
-void M_VerifyNightmare(int key)
+static void M_VerifyNightmare(int key)
 {
     if (key != key_menu_confirm)
 	return;
@@ -1032,7 +1027,7 @@ void M_ChangeMessages(int choice)
 //
 // M_EndGame
 //
-void M_EndGameResponse(int key)
+static void M_EndGameResponse(int key)
 {
     if (key != key_menu_confirm)
 	return;
@@ -1128,7 +1123,7 @@ int     quitsounds2[8] =
 
 
 
-void M_QuitResponse(int key)
+static void M_QuitResponse(int key)
 {
     if (key != key_menu_confirm)
 	return;
@@ -1264,27 +1259,6 @@ M_DrawThermo
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 }
 
-
-
-void
-M_DrawEmptyCell
-( menu_t*	menu,
-  int		item )
-{
-    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1, 
-                      W_CacheLumpName(DEH_String("M_CELL1"), PU_CACHE));
-}
-
-void
-M_DrawSelCell
-( menu_t*	menu,
-  int		item )
-{
-    V_DrawPatchDirect(menu->x - 10, menu->y + item * LINEHEIGHT - 1,
-                      W_CacheLumpName(DEH_String("M_CELL2"), PU_CACHE));
-}
-
-
 void
 M_StartMessage
 ( char*		string,
@@ -1299,14 +1273,6 @@ M_StartMessage
     menuactive = true;
     return;
 }
-
-
-void M_StopMessage(void)
-{
-    menuactive = messageLastMenuActive;
-    messageToPrint = 0;
-}
-
 
 
 //
@@ -1402,8 +1368,8 @@ M_WriteText
 
 static boolean IsNullKey(int key)
 {
-    return key == KEY_PAUSE || key == KEY_CAPSLOCK
-        || key == KEY_SCRLCK || key == KEY_NUMLOCK;
+    return key == DOOM_KEY_PAUSE || key == DOOM_KEY_CAPSLOCK
+        || key == DOOM_KEY_SCRLCK || key == DOOM_KEY_NUMLOCK;
 }
 
 //
@@ -1567,7 +1533,7 @@ boolean M_Responder (event_t* ev)
     {
 	switch(key)
 	{
-	  case KEY_BACKSPACE:
+	  case DOOM_KEY_BACKSPACE:
 	    if (saveCharIndex > 0)
 	    {
 		saveCharIndex--;
@@ -1575,13 +1541,13 @@ boolean M_Responder (event_t* ev)
 	    }
 	    break;
 
-          case KEY_ESCAPE:
+          case DOOM_KEY_ESCAPE:
             saveStringEnter = 0;
             M_StringCopy(savegamestrings[saveSlot], saveOldString,
                          SAVESTRINGSIZE);
             break;
 
-	  case KEY_ENTER:
+	  case DOOM_KEY_ENTER:
 	    saveStringEnter = 0;
 	    if (savegamestrings[saveSlot][0])
 		M_DoSave(saveSlot);
@@ -1626,7 +1592,7 @@ boolean M_Responder (event_t* ev)
     {
 	if (messageNeedsInput)
         {
-            if (key != ' ' && key != KEY_ESCAPE
+            if (key != ' ' && key != DOOM_KEY_ESCAPE
              && key != key_menu_confirm && key != key_menu_abort)
             {
                 return false;

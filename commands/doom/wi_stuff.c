@@ -17,8 +17,6 @@
 //
 
 
-#include <stdio.h>
-
 #include "z_zone.h"
 
 #include "m_misc.h"
@@ -399,21 +397,13 @@ static patch_t *background;
 //
 
 // slam background
-void WI_slamBackground(void)
+static void WI_slamBackground(void)
 {
     V_DrawPatch(0, 0, background);
 }
 
-// The ticker is used to detect keys
-//  because of timing issues in netgames.
-boolean WI_Responder(event_t* ev)
-{
-    return false;
-}
-
-
 // Draws "<Levelname> Finished!"
-void WI_drawLF(void)
+static void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
@@ -449,7 +439,7 @@ void WI_drawLF(void)
 
 
 // Draws "Entering <LevelName>"
-void WI_drawEL(void)
+static void WI_drawEL(void)
 {
     int y = WI_TITLEY;
 
@@ -467,7 +457,7 @@ void WI_drawEL(void)
 
 }
 
-void
+static void
 WI_drawOnLnode
 ( int		n,
   patch_t*	c[] )
@@ -516,7 +506,7 @@ WI_drawOnLnode
 
 
 
-void WI_initAnimatedBack(void)
+static void WI_initAnimatedBack(void)
 {
     int		i;
     anim_t*	a;
@@ -545,7 +535,7 @@ void WI_initAnimatedBack(void)
 
 }
 
-void WI_updateAnimatedBack(void)
+static void WI_updateAnimatedBack(void)
 {
     int		i;
     anim_t*	a;
@@ -596,7 +586,7 @@ void WI_updateAnimatedBack(void)
 
 }
 
-void WI_drawAnimatedBack(void)
+static void WI_drawAnimatedBack(void)
 {
     int			i;
     anim_t*		a;
@@ -624,7 +614,7 @@ void WI_drawAnimatedBack(void)
 // Returns new x position.
 //
 
-int
+static int
 WI_drawNum
 ( int		x,
   int		y,
@@ -681,7 +671,7 @@ WI_drawNum
 
 }
 
-void
+static void
 WI_drawPercent
 ( int		x,
   int		y,
@@ -700,7 +690,7 @@ WI_drawPercent
 // Display level completion time and par,
 //  or "sucks" message if overflow.
 //
-void
+static void
 WI_drawTime
 ( int		x,
   int		y,
@@ -736,21 +726,21 @@ WI_drawTime
     }
 }
 
+static void WI_unloadData(void);
 
 void WI_End(void)
 {
-    void WI_unloadData(void);
     WI_unloadData();
 }
 
-void WI_initNoState(void)
+static void WI_initNoState(void)
 {
     state = NoState;
     acceleratestage = 0;
     cnt = 10;
 }
 
-void WI_updateNoState(void) {
+static void WI_updateNoState(void) {
 
     WI_updateAnimatedBack();
 
@@ -769,7 +759,7 @@ void WI_updateNoState(void) {
 static boolean		snl_pointeron = false;
 
 
-void WI_initShowNextLoc(void)
+static void WI_initShowNextLoc(void)
 {
     state = ShowNextLoc;
     acceleratestage = 0;
@@ -778,7 +768,7 @@ void WI_initShowNextLoc(void)
     WI_initAnimatedBack();
 }
 
-void WI_updateShowNextLoc(void)
+static void WI_updateShowNextLoc(void)
 {
     WI_updateAnimatedBack();
 
@@ -788,7 +778,7 @@ void WI_updateShowNextLoc(void)
 	snl_pointeron = (cnt & 31) < 20;
 }
 
-void WI_drawShowNextLoc(void)
+static void WI_drawShowNextLoc(void)
 {
 
     int		i;
@@ -829,13 +819,13 @@ void WI_drawShowNextLoc(void)
 
 }
 
-void WI_drawNoState(void)
+static void WI_drawNoState(void)
 {
     snl_pointeron = true;
     WI_drawShowNextLoc();
 }
 
-int WI_fragSum(int playernum)
+static int WI_fragSum(int playernum)
 {
     int		i;
     int		frags = 0;
@@ -866,7 +856,7 @@ static int		dm_totals[MAXPLAYERS];
 
 
 
-void WI_initDeathmatchStats(void)
+static void WI_initDeathmatchStats(void)
 {
 
     int		i;
@@ -895,7 +885,7 @@ void WI_initDeathmatchStats(void)
 
 
 
-void WI_updateDeathmatchStats(void)
+static void WI_updateDeathmatchStats(void)
 {
 
     int		i;
@@ -998,7 +988,7 @@ void WI_updateDeathmatchStats(void)
 
 
 
-void WI_drawDeathmatchStats(void)
+static void WI_drawDeathmatchStats(void)
 {
 
     int		i;
@@ -1086,7 +1076,7 @@ static int	cnt_frags[MAXPLAYERS];
 static int	dofrags;
 static int	ng_state;
 
-void WI_initNetgameStats(void)
+static void WI_initNetgameStats(void)
 {
 
     int i;
@@ -1114,7 +1104,7 @@ void WI_initNetgameStats(void)
 
 
 
-void WI_updateNetgameStats(void)
+static void WI_updateNetgameStats(void)
 {
 
     int		i;
@@ -1269,7 +1259,7 @@ void WI_updateNetgameStats(void)
 
 
 
-void WI_drawNetgameStats(void)
+static void WI_drawNetgameStats(void)
 {
     int		i;
     int		x;
@@ -1326,7 +1316,7 @@ void WI_drawNetgameStats(void)
 
 static int	sp_state;
 
-void WI_initStats(void)
+static void WI_initStats(void)
 {
     state = StatCount;
     acceleratestage = 0;
@@ -1338,7 +1328,7 @@ void WI_initStats(void)
     WI_initAnimatedBack();
 }
 
-void WI_updateStats(void)
+static void WI_updateStats(void)
 {
 
     WI_updateAnimatedBack();
@@ -1444,7 +1434,7 @@ void WI_updateStats(void)
 
 }
 
-void WI_drawStats(void)
+static void WI_drawStats(void)
 {
     // line height
     int lh;	
@@ -1478,7 +1468,7 @@ void WI_drawStats(void)
 
 }
 
-void WI_checkForAccelerate(void)
+static void WI_checkForAccelerate(void)
 {
     int   i;
     player_t  *player;
@@ -1554,14 +1544,14 @@ typedef void (*load_callback_t)(char *lumpname, patch_t **variable);
 static void WI_loadUnloadData(load_callback_t callback)
 {
     int i, j;
-    char name[9];
+    char name[32];
     anim_t *a;
 
     if (gamemode == commercial)
     {
 	for (i=0 ; i<NUMCMAPS ; i++)
 	{
-	    DEH_snprintf(name, 9, "CWILV%2.2d", i);
+	    DEH_snprintf(name, sizeof name, "CWILV%2.2d", i);
             callback(name, &lnames[i]);
 	}
     }
@@ -1569,7 +1559,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     {
 	for (i=0 ; i<NUMMAPS ; i++)
 	{
-	    DEH_snprintf(name, 9, "WILV%d%d", wbs->epsd, i);
+	    DEH_snprintf(name, sizeof name, "WILV%d%d", wbs->epsd, i);
             callback(name, &lnames[i]);
 	}
 
@@ -1593,7 +1583,7 @@ static void WI_loadUnloadData(load_callback_t callback)
 		    if (wbs->epsd != 1 || j != 8)
 		    {
 			// animations
-			DEH_snprintf(name, 9, "WIA%d%.2d%.2d", wbs->epsd, j, i);
+			DEH_snprintf(name, sizeof name, "WIA%d%.2d%.2d", wbs->epsd, j, i);
                         callback(name, &a->p[i]);
 		    }
 		    else
@@ -1612,7 +1602,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     for (i=0;i<10;i++)
     {
 	 // numbers 0-9
-	DEH_snprintf(name, 9, "WINUM%d", i);
+	DEH_snprintf(name, sizeof name, "WINUM%d", i);
         callback(name, &num[i]);
     }
 
@@ -1673,11 +1663,11 @@ static void WI_loadUnloadData(load_callback_t callback)
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
 	// "1,2,3,4"
-	DEH_snprintf(name, 9, "STPB%d", i);
+	DEH_snprintf(name, sizeof name, "STPB%d", i);
         callback(name, &p[i]);
 
 	// "1,2,3,4"
-	DEH_snprintf(name, 9, "WIBP%d", i+1);
+	DEH_snprintf(name, sizeof name, "WIBP%d", i+1);
         callback(name, &bp[i]);
     }
 
@@ -1706,7 +1696,7 @@ static void WI_loadCallback(char *name, patch_t **variable)
     *variable = W_CacheLumpName(name, PU_STATIC);
 }
 
-void WI_loadData(void)
+static void WI_loadData(void)
 {
     if (gamemode == commercial)
     {
@@ -1738,7 +1728,7 @@ static void WI_unloadCallback(char *name, patch_t **variable)
     *variable = NULL;
 }
 
-void WI_unloadData(void)
+static void WI_unloadData(void)
 {
     WI_loadUnloadData(WI_unloadCallback);
 
@@ -1773,7 +1763,7 @@ void WI_Drawer (void)
 }
 
 
-void WI_initVariables(wbstartstruct_t* wbstartstruct)
+static void WI_initVariables(wbstartstruct_t* wbstartstruct)
 {
 
     wbs = wbstartstruct;

@@ -2024,6 +2024,17 @@ config CMD_2048
 	help
 	  Console version of the game "2048" for GNU/Linux
 
+config CMD_DOOM
+	tristate
+	prompt "DOOM"
+	depends on VIDEO
+	select IMAGE_RENDERER
+	select BTHREAD
+	imply INPUT
+	imply SOUND
+	help
+	  Play DOOM
+
 config CMD_BAREBOX_UPDATE
 	tristate
 	select BAREBOX_UPDATE

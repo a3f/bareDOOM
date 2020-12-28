@@ -69,7 +69,7 @@ twoSided
 ( int		sector,
   int		line );
 
-sector_t*
+doomsector_t*
 getSector
 ( int		currentSector,
   int		line,
@@ -81,16 +81,16 @@ getSide
   int		line,
   int		side );
 
-fixed_t P_FindLowestFloorSurrounding(sector_t* sec);
-fixed_t P_FindHighestFloorSurrounding(sector_t* sec);
+fixed_t P_FindLowestFloorSurrounding(doomsector_t* sec);
+fixed_t P_FindHighestFloorSurrounding(doomsector_t* sec);
 
 fixed_t
 P_FindNextHighestFloor
-( sector_t*	sec,
+( doomsector_t*	sec,
   int		currentheight );
 
-fixed_t P_FindLowestCeilingSurrounding(sector_t* sec);
-fixed_t P_FindHighestCeilingSurrounding(sector_t* sec);
+fixed_t P_FindLowestCeilingSurrounding(doomsector_t* sec);
+fixed_t P_FindHighestCeilingSurrounding(doomsector_t* sec);
 
 int
 P_FindSectorFromLineTag
@@ -99,13 +99,13 @@ P_FindSectorFromLineTag
 
 int
 P_FindMinSurroundingLight
-( sector_t*	sector,
+( doomsector_t*	sector,
   int		max );
 
-sector_t*
+doomsector_t*
 getNextSector
 ( line_t*	line,
-  sector_t*	sec );
+  doomsector_t*	sec );
 
 
 //
@@ -121,7 +121,7 @@ int EV_DoDonut(line_t* line);
 typedef struct
 {
     thinker_t	thinker;
-    sector_t*	sector;
+    doomsector_t*	sector;
     int		count;
     int		maxlight;
     int		minlight;
@@ -133,7 +133,7 @@ typedef struct
 typedef struct
 {
     thinker_t	thinker;
-    sector_t*	sector;
+    doomsector_t*	sector;
     int		count;
     int		maxlight;
     int		minlight;
@@ -147,7 +147,7 @@ typedef struct
 typedef struct
 {
     thinker_t	thinker;
-    sector_t*	sector;
+    doomsector_t*	sector;
     int		count;
     int		minlight;
     int		maxlight;
@@ -162,7 +162,7 @@ typedef struct
 typedef struct
 {
     thinker_t	thinker;
-    sector_t*	sector;
+    doomsector_t*	sector;
     int		minlight;
     int		maxlight;
     int		direction;
@@ -175,14 +175,14 @@ typedef struct
 #define FASTDARK			15
 #define SLOWDARK			35
 
-void    P_SpawnFireFlicker (sector_t* sector);
+void    P_SpawnFireFlicker (doomsector_t* sector);
 void    T_LightFlash (lightflash_t* flash);
-void    P_SpawnLightFlash (sector_t* sector);
+void    P_SpawnLightFlash (doomsector_t* sector);
 void    T_StrobeFlash (strobe_t* flash);
 
 void
 P_SpawnStrobeFlash
-( sector_t*	sector,
+( doomsector_t*	sector,
   int		fastOrSlow,
   int		inSync );
 
@@ -195,7 +195,7 @@ EV_LightTurnOn
   int		bright );
 
 void    T_Glow(glow_t* g);
-void    P_SpawnGlowingLight(sector_t* sector);
+void    P_SpawnGlowingLight(doomsector_t* sector);
 
 
 
@@ -282,7 +282,7 @@ typedef enum
 typedef struct
 {
     thinker_t	thinker;
-    sector_t*	sector;
+    doomsector_t*	sector;
     fixed_t	speed;
     fixed_t	low;
     fixed_t	high;
@@ -341,7 +341,7 @@ typedef struct
 {
     thinker_t	thinker;
     vldoor_e	type;
-    sector_t*	sector;
+    doomsector_t*	sector;
     fixed_t	topheight;
     fixed_t	speed;
 
@@ -378,11 +378,11 @@ EV_DoLockedDoor
   mobj_t*	thing );
 
 void    T_VerticalDoor (vldoor_t* door);
-void    P_SpawnDoorCloseIn30 (sector_t* sec);
+void    P_SpawnDoorCloseIn30 (doomsector_t* sec);
 
 void
 P_SpawnDoorRaiseIn5Mins
-( sector_t*	sec,
+( doomsector_t*	sec,
   int		secnum );
 
 
@@ -420,8 +420,8 @@ typedef struct
     int		frame;
     int		whichDoorIndex;
     int		timer;
-    sector_t*	frontsector;
-    sector_t*	backsector;
+    doomsector_t*	frontsector;
+    doomsector_t*	backsector;
     sd_e	 status;
 
 } slidedoor_t;
@@ -491,7 +491,7 @@ typedef struct
 {
     thinker_t	thinker;
     ceiling_e	type;
-    sector_t*	sector;
+    doomsector_t*	sector;
     fixed_t	bottomheight;
     fixed_t	topheight;
     fixed_t	speed;
@@ -583,7 +583,7 @@ typedef struct
     thinker_t	thinker;
     floor_e	type;
     boolean	crush;
-    sector_t*	sector;
+    doomsector_t*	sector;
     int		direction;
     int		newspecial;
     short	texture;
@@ -606,7 +606,7 @@ typedef enum
 
 result_e
 T_MovePlane
-( sector_t*	sector,
+( doomsector_t*	sector,
   fixed_t	speed,
   fixed_t	dest,
   boolean	crush,

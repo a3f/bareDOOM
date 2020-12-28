@@ -16,9 +16,6 @@
 // DESCRIPTION:  the automap code
 //
 
-
-#include <stdio.h>
-
 #include "deh_main.h"
 
 #include "z_zone.h"
@@ -267,30 +264,10 @@ cheatseq_t cheat_amap = CHEAT("iddt", 0);
 
 static boolean stopped = true;
 
-// Calculates the slope and slope according to the x-axis of a line
-// segment in map coordinates (with the upright y-axis n' all) so
-// that it can be used with the brain-dead drawing stuff.
-
-void
-AM_getIslope
-( mline_t*	ml,
-  islope_t*	is )
-{
-    int dx, dy;
-
-    dy = ml->a.y - ml->b.y;
-    dx = ml->b.x - ml->a.x;
-    if (!dy) is->islp = (dx<0?-INT_MAX:INT_MAX);
-    else is->islp = FixedDiv(dx, dy);
-    if (!dx) is->slp = (dy<0?-INT_MAX:INT_MAX);
-    else is->slp = FixedDiv(dy, dx);
-
-}
-
 //
 //
 //
-void AM_activateNewScale(void)
+static void AM_activateNewScale(void)
 {
     m_x += m_w/2;
     m_y += m_h/2;
@@ -305,7 +282,7 @@ void AM_activateNewScale(void)
 //
 //
 //
-void AM_saveScaleAndLoc(void)
+static void AM_saveScaleAndLoc(void)
 {
     old_m_x = m_x;
     old_m_y = m_y;
@@ -316,7 +293,7 @@ void AM_saveScaleAndLoc(void)
 //
 //
 //
-void AM_restoreScaleAndLoc(void)
+static void AM_restoreScaleAndLoc(void)
 {
 
     m_w = old_m_w;
@@ -340,7 +317,7 @@ void AM_restoreScaleAndLoc(void)
 //
 // adds a marker at the current location
 //
-void AM_addMark(void)
+static void AM_addMark(void)
 {
     markpoints[markpointnum].x = m_x + m_w/2;
     markpoints[markpointnum].y = m_y + m_h/2;
@@ -352,7 +329,7 @@ void AM_addMark(void)
 // Determines bounding box of all vertices,
 // sets global variables controlling zoom range.
 //
-void AM_findMinMaxBoundaries(void)
+static void AM_findMinMaxBoundaries(void)
 {
     int i;
     fixed_t a;
@@ -392,7 +369,7 @@ void AM_findMinMaxBoundaries(void)
 //
 //
 //
-void AM_changeWindowLoc(void)
+static void AM_changeWindowLoc(void)
 {
     if (m_paninc.x || m_paninc.y)
     {
@@ -421,7 +398,7 @@ void AM_changeWindowLoc(void)
 //
 //
 //
-void AM_initVariables(void)
+static void AM_initVariables(void)
 {
     int pnum;
     static event_t st_notify = { ev_keyup, AM_MSGENTERED, 0, 0 };
@@ -477,7 +454,7 @@ void AM_initVariables(void)
 //
 // 
 //
-void AM_loadPics(void)
+static void AM_loadPics(void)
 {
     int i;
     char namebuf[9];
@@ -490,7 +467,7 @@ void AM_loadPics(void)
 
 }
 
-void AM_unloadPics(void)
+static void AM_unloadPics(void)
 {
     int i;
     char namebuf[9];
@@ -502,7 +479,7 @@ void AM_unloadPics(void)
     }
 }
 
-void AM_clearMarks(void)
+static void AM_clearMarks(void)
 {
     int i;
 
@@ -515,7 +492,7 @@ void AM_clearMarks(void)
 // should be called at the start of every level
 // right now, i figure it out myself
 //
-void AM_LevelInit(void)
+static void AM_LevelInit(void)
 {
     leveljuststarted = 0;
 
@@ -551,7 +528,7 @@ void AM_Stop (void)
 //
 //
 //
-void AM_Start (void)
+static void AM_Start (void)
 {
     static int lastlevel = -1, lastepisode = -1;
 
@@ -570,7 +547,7 @@ void AM_Start (void)
 //
 // set the window scale to the maximum size
 //
-void AM_minOutWindowScale(void)
+static void AM_minOutWindowScale(void)
 {
     scale_mtof = min_scale_mtof;
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
@@ -580,7 +557,7 @@ void AM_minOutWindowScale(void)
 //
 // set the window scale to the minimum size
 //
-void AM_maxOutWindowScale(void)
+static void AM_maxOutWindowScale(void)
 {
     scale_mtof = max_scale_mtof;
     scale_ftom = FixedDiv(FRACUNIT, scale_mtof);
@@ -739,7 +716,7 @@ AM_Responder
 //
 // Zooming
 //
-void AM_changeWindowScale(void)
+static void AM_changeWindowScale(void)
 {
 
     // Change the scaling multipliers
@@ -758,7 +735,7 @@ void AM_changeWindowScale(void)
 //
 //
 //
-void AM_doFollowPlayer(void)
+static void AM_doFollowPlayer(void)
 {
 
     if (f_oldloc.x != plr->mo->x || f_oldloc.y != plr->mo->y)
@@ -778,27 +755,6 @@ void AM_doFollowPlayer(void)
     }
 
 }
-
-//
-//
-//
-void AM_updateLightLev(void)
-{
-    static int nexttic = 0;
-    //static int litelevels[] = { 0, 3, 5, 6, 6, 7, 7, 7 };
-    static int litelevels[] = { 0, 4, 7, 10, 12, 14, 15, 15 };
-    static int litelevelscnt = 0;
-   
-    // Change light level
-    if (amclock>nexttic)
-    {
-	lightlev = litelevels[litelevelscnt++];
-	if (litelevelscnt == arrlen(litelevels)) litelevelscnt = 0;
-	nexttic = amclock + 6 - (amclock % 6);
-    }
-
-}
-
 
 //
 // Updates on Game Tick
@@ -831,7 +787,7 @@ void AM_Ticker (void)
 //
 // Clear automap frame buffer.
 //
-void AM_clearFB(int color)
+static void AM_clearFB(int color)
 {
     memset(fb, color, f_w*f_h);
 }
@@ -844,7 +800,7 @@ void AM_clearFB(int color)
 // faster reject and precalculated slopes.  If the speed is needed,
 // use a hash algorithm to handle  the common cases.
 //
-boolean
+static boolean
 AM_clipMline
 ( mline_t*	ml,
   fline_t*	fl )
@@ -980,7 +936,7 @@ AM_clipMline
 //
 // Classic Bresenham w/ whatever optimizations needed for speed
 //
-void
+static void
 AM_drawFline
 ( fline_t*	fl,
   int		color )
@@ -1058,7 +1014,7 @@ AM_drawFline
 //
 // Clip lines, draw visible part sof lines.
 //
-void
+static void
 AM_drawMline
 ( mline_t*	ml,
   int		color )
@@ -1074,7 +1030,7 @@ AM_drawMline
 //
 // Draws flat (floor/ceiling tile) aligned grid lines.
 //
-void AM_drawGrid(int color)
+static void AM_drawGrid(int color)
 {
     fixed_t x, y;
     fixed_t start, end;
@@ -1120,7 +1076,7 @@ void AM_drawGrid(int color)
 // Determines visible lines, draws them.
 // This is LineDef based, not LineSeg based.
 //
-void AM_drawWalls(void)
+static void AM_drawWalls(void)
 {
     int i;
     static mline_t l;
@@ -1175,7 +1131,7 @@ void AM_drawWalls(void)
 // Rotation in 2D.
 // Used to rotate player arrow line character.
 //
-void
+static void
 AM_rotate
 ( fixed_t*	x,
   fixed_t*	y,
@@ -1194,7 +1150,7 @@ AM_rotate
     *x = tmpx;
 }
 
-void
+static void
 AM_drawLineCharacter
 ( mline_t*	lineguy,
   int		lineguylines,
@@ -1243,7 +1199,7 @@ AM_drawLineCharacter
     }
 }
 
-void AM_drawPlayers(void)
+static void AM_drawPlayers(void)
 {
     int		i;
     player_t*	p;
@@ -1287,7 +1243,7 @@ void AM_drawPlayers(void)
 
 }
 
-void
+static void
 AM_drawThings
 ( int	colors,
   int 	colorrange)
@@ -1308,7 +1264,7 @@ AM_drawThings
     }
 }
 
-void AM_drawMarks(void)
+static void AM_drawMarks(void)
 {
     int i, fx, fy, w, h;
 
@@ -1329,7 +1285,7 @@ void AM_drawMarks(void)
 
 }
 
-void AM_drawCrosshair(int color)
+static void AM_drawCrosshair(int color)
 {
     fb[(f_w*(f_h+1))/2] = color; // single point for now
 

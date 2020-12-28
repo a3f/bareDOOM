@@ -1,8 +1,11 @@
 #include "doomkeys.h"
 
 #include "doomgeneric.h"
+#include "doom.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -12,10 +15,10 @@
 #include <X11/Xatom.h>
 
 static Display *s_Display = NULL;
-static Window s_Window = NULL;
+static Window s_Window = 0;
 static int s_Screen = 0;
 static GC s_Gc = 0;
-static Pixmap s_Pixmap = NULL;
+static Pixmap s_Pixmap = 0;
 
 #define KEYQUEUE_SIZE 16
 
@@ -28,33 +31,33 @@ static unsigned char convertToDoomKey(unsigned int key)
 	switch (key)
 	{
     case XK_Return:
-		key = KEY_ENTER;
+		key = DOOM_KEY_ENTER;
 		break;
     case XK_Escape:
-		key = KEY_ESCAPE;
+		key = DOOM_KEY_ESCAPE;
 		break;
     case XK_Left:
-		key = KEY_LEFTARROW;
+		key = DOOM_KEY_LEFTARROW;
 		break;
     case XK_Right:
-		key = KEY_RIGHTARROW;
+		key = DOOM_KEY_RIGHTARROW;
 		break;
     case XK_Up:
-		key = KEY_UPARROW;
+		key = DOOM_KEY_UPARROW;
 		break;
     case XK_Down:
-		key = KEY_DOWNARROW;
+		key = DOOM_KEY_DOWNARROW;
 		break;
     case XK_Control_L:
     case XK_Control_R:
-		key = KEY_FIRE;
+		key = DOOM_KEY_FIRE;
 		break;
     case XK_space:
-		key = KEY_USE;
+		key = DOOM_KEY_USE;
 		break;
     case XK_Shift_L:
     case XK_Shift_R:
-		key = KEY_RSHIFT;
+		key = DOOM_KEY_RSHIFT;
 		break;
 	default:
 		key = tolower(key);
@@ -75,9 +78,13 @@ static void addKeyToQueue(int pressed, unsigned int keyCode)
 	s_KeyQueueWriteIndex %= KEYQUEUE_SIZE;
 }
 
-void DG_Init()
+Bool XkbSetDetectableAutoRepeat (Display *display, Bool detectable, Bool *supported_rtrn);
+
+static void DG_Init(void)
 {
-	memset(s_KeyQueue, 0, KEYQUEUE_SIZE * sizeof(unsigned short));
+    int blackColor, whiteColor, depth;
+
+    memset(s_KeyQueue, 0, KEYQUEUE_SIZE * sizeof(unsigned short));
 
     // window creation
 
@@ -85,15 +92,15 @@ void DG_Init()
 
     s_Screen = DefaultScreen(s_Display);
 
-    int blackColor = BlackPixel(s_Display, s_Screen);
-    int whiteColor = WhitePixel(s_Display, s_Screen);
+    blackColor = BlackPixel(s_Display, s_Screen);
+    whiteColor = WhitePixel(s_Display, s_Screen);
 
     XSetWindowAttributes attr;
     memset(&attr, 0, sizeof(XSetWindowAttributes));
     attr.event_mask = ExposureMask | KeyPressMask;
     attr.background_pixel = BlackPixel(s_Display, s_Screen);
 
-    int depth = DefaultDepth(s_Display, s_Screen);
+    depth = DefaultDepth(s_Display, s_Screen);
 
     s_Window = XCreateSimpleWindow(s_Display, DefaultRootWindow(s_Display), 0, 0, DOOMGENERIC_RESX, DOOMGENERIC_RESY, 0, blackColor, blackColor);
 
@@ -122,9 +129,18 @@ void DG_Init()
     s_Pixmap = XCreatePixmap(s_Display, s_Window, DOOMGENERIC_RESX, DOOMGENERIC_RESY, depth);
 }
 
-
-void DG_DrawFrame()
+int DG_RunDoom(void)
 {
+    DG_Init();
+    DG_ScreenBuffer = malloc(DOOMGENERIC_RESX * DOOMGENERIC_RESY * 4);
+    D_DoomMain();
+    return 0;
+}
+
+void DG_DrawFrame(void)
+{
+    int r, c;
+
     if (s_Display)
     {
         while (XPending(s_Display) > 0)
@@ -149,9 +165,9 @@ void DG_DrawFrame()
         XSetForeground(s_Display, s_Gc, 0x0000FF);
         XFillRectangle(s_Display, s_Pixmap, s_Gc, 0, 0, DOOMGENERIC_RESX, DOOMGENERIC_RESY);
 
-        for (int r = 0; r < DOOMGENERIC_RESY; ++r)
+        for (r = 0; r < DOOMGENERIC_RESY; ++r)
         {
-            for (int c = 0; c < DOOMGENERIC_RESX; ++c)
+            for (c = 0; c < DOOMGENERIC_RESX; ++c)
             {
                 unsigned int pixel = DG_ScreenBuffer[r * DOOMGENERIC_RESX + c];
                 XSetForeground(s_Display, s_Gc, pixel);

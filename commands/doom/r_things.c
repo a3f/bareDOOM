@@ -19,7 +19,6 @@
 
 
 
-#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -35,6 +34,7 @@
 
 #include "doomstat.h"
 
+#include "r_things.h"
 
 
 #define MINZ				(FRACUNIT*4)
@@ -96,7 +96,7 @@ char*		spritename;
 // R_InstallSpriteLump
 // Local function for R_InitSprites.
 //
-void
+static void
 R_InstallSpriteLump
 ( int		lump,
   unsigned	frame,
@@ -168,7 +168,7 @@ R_InstallSpriteLump
 //  letter/number appended.
 // The rotation character can be 0 to signify no rotations.
 //
-void R_InitSpriteDefs (char** namelist) 
+static void R_InitSpriteDefs (char** namelist) 
 { 
     char**	check;
     int		i;
@@ -317,7 +317,7 @@ void R_ClearSprites (void)
 //
 vissprite_t	overflowsprite;
 
-vissprite_t* R_NewVisSprite (void)
+static vissprite_t* R_NewVisSprite (void)
 {
     if (vissprite_p == &vissprites[MAXVISSPRITES])
 	return &overflowsprite;
@@ -385,7 +385,7 @@ void R_DrawMaskedColumn (column_t* column)
 // R_DrawVisSprite
 //  mfloorclip and mceilingclip should also be set.
 //
-void
+static void
 R_DrawVisSprite
 ( vissprite_t*		vis,
   int			x1,
@@ -441,7 +441,7 @@ R_DrawVisSprite
 // Generates a vissprite for a thing
 //  if it might be visible.
 //
-void R_ProjectSprite (mobj_t* thing)
+static void R_ProjectSprite (mobj_t* thing)
 {
     fixed_t		tr_x;
     fixed_t		tr_y;
@@ -602,7 +602,7 @@ void R_ProjectSprite (mobj_t* thing)
 // R_AddSprites
 // During BSP traversal, this adds sprites by sector.
 //
-void R_AddSprites (sector_t* sec)
+void R_AddSprites (doomsector_t* sec)
 {
     mobj_t*		thing;
     int			lightnum;
@@ -635,7 +635,7 @@ void R_AddSprites (sector_t* sec)
 //
 // R_DrawPSprite
 //
-void R_DrawPSprite (pspdef_t* psp)
+static void R_DrawPSprite (pspdef_t* psp)
 {
     fixed_t		tx;
     int			x1;
@@ -735,7 +735,7 @@ void R_DrawPSprite (pspdef_t* psp)
 //
 // R_DrawPlayerSprites
 //
-void R_DrawPlayerSprites (void)
+static void R_DrawPlayerSprites (void)
 {
     int		i;
     int		lightnum;
@@ -782,7 +782,7 @@ void R_SortVisSprites (void)
     int			count;
     vissprite_t*	ds;
     vissprite_t*	best;
-    vissprite_t		unsorted;
+    static vissprite_t		unsorted;
     fixed_t		bestscale;
 
     count = vissprite_p - vissprites;
@@ -834,7 +834,7 @@ void R_SortVisSprites (void)
 //
 static short		clipbot[SCREENWIDTH];
 static short		cliptop[SCREENWIDTH];
-void R_DrawSprite (vissprite_t* spr)
+static void R_DrawSprite (vissprite_t* spr)
 {
     drawseg_t*		ds;
     int			x;

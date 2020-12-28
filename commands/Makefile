@@ -133,4 +133,6 @@ obj-$(CONFIG_CMD_BTHREAD)	+= bthread.o
 obj-$(CONFIG_CMD_UBSAN)		+= ubsan.o
 obj-$(CONFIG_CMD_SELFTEST)	+= selftest.o
 
+obj-$(CONFIG_CMD_DOOM)		+= doom/
+
 UBSAN_SANITIZE_ubsan.o := y

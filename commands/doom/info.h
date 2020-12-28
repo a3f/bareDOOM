@@ -1328,4 +1328,85 @@ typedef struct
 
 extern mobjinfo_t mobjinfo[NUMMOBJTYPES];
 
+struct mobj_s;
+struct player_s;
+struct pspdef_s;
+
+// Doesn't work with g++, needs actionf_p1
+void A_Light0(struct player_s*, struct pspdef_s*);
+void A_WeaponReady(struct player_s*, struct pspdef_s*);
+void A_Lower(struct player_s*, struct pspdef_s*);
+void A_Raise(struct player_s*, struct pspdef_s*);
+void A_Punch(struct player_s*, struct pspdef_s*);
+void A_FirePistol(struct player_s*, struct pspdef_s*);
+void A_Light1(struct player_s*, struct pspdef_s*);
+void A_FireShotgun(struct player_s*, struct pspdef_s*);
+void A_Light2(struct player_s*, struct pspdef_s*);
+void A_FireShotgun2(struct player_s*, struct pspdef_s*);
+void A_CheckReload(struct player_s*, struct pspdef_s*);
+void A_OpenShotgun2(struct player_s*, struct pspdef_s*);
+void A_LoadShotgun2(struct player_s*, struct pspdef_s*);
+void A_ReFire(struct player_s*, struct pspdef_s*);
+void A_CloseShotgun2 (struct player_s*, struct pspdef_s*);
+void A_FireCGun(struct player_s*, struct pspdef_s*);
+void A_GunFlash(struct player_s*, struct pspdef_s*);
+void A_FireMissile(struct player_s*, struct pspdef_s*);
+void A_Saw(struct player_s*, struct pspdef_s*);
+void A_FirePlasma(struct player_s*, struct pspdef_s*);
+void A_BFGsound(struct player_s*, struct pspdef_s*);
+void A_FireBFG(struct player_s*, struct pspdef_s*);
+void A_BFGSpray(struct mobj_s *);
+void A_Explode(struct mobj_s *);
+void A_Pain(struct mobj_s *);
+void A_PlayerScream(struct mobj_s *);
+void A_Fall(struct mobj_s *);
+void A_XScream(struct mobj_s *);
+void A_Look(struct mobj_s *);
+void A_Chase(struct mobj_s *);
+void A_FaceTarget(struct mobj_s *);
+void A_PosAttack(struct mobj_s *);
+void A_Scream(struct mobj_s *);
+void A_SPosAttack(struct mobj_s *);
+void A_VileChase(struct mobj_s *);
+void A_VileStart(struct mobj_s *);
+void A_VileTarget(struct mobj_s *);
+void A_VileAttack(struct mobj_s *);
+void A_StartFire(struct mobj_s *);
+void A_Fire(struct mobj_s *);
+void A_FireCrackle(struct mobj_s *);
+void A_Tracer(struct mobj_s *);
+void A_SkelWhoosh(struct mobj_s *);
+void A_SkelFist(struct mobj_s *);
+void A_SkelMissile(struct mobj_s *);
+void A_FatRaise(struct mobj_s *);
+void A_FatAttack1(struct mobj_s *);
+void A_FatAttack2(struct mobj_s *);
+void A_FatAttack3(struct mobj_s *);
+void A_BossDeath(struct mobj_s *);
+void A_CPosAttack(struct mobj_s *);
+void A_CPosRefire(struct mobj_s *);
+void A_TroopAttack(struct mobj_s *);
+void A_SargAttack(struct mobj_s *);
+void A_HeadAttack(struct mobj_s *);
+void A_BruisAttack(struct mobj_s *);
+void A_SkullAttack(struct mobj_s *);
+void A_Metal(struct mobj_s *);
+void A_SpidRefire(struct mobj_s *);
+void A_BabyMetal(struct mobj_s *);
+void A_BspiAttack(struct mobj_s *);
+void A_Hoof(struct mobj_s *);
+void A_CyberAttack(struct mobj_s *);
+void A_PainAttack(struct mobj_s *);
+void A_PainDie(struct mobj_s *);
+void A_KeenDie(struct mobj_s *);
+void A_BrainPain(struct mobj_s *);
+void A_BrainScream(struct mobj_s *);
+void A_BrainDie(struct mobj_s*);
+void A_BrainAwake(struct mobj_s *);
+void A_BrainSpit(struct mobj_s*);
+void A_SpawnSound(struct mobj_s *);
+void A_SpawnFly(struct mobj_s *);
+void A_BrainExplode(struct mobj_s *);
+
+
 #endif

@@ -20,7 +20,6 @@
 
 
 #include <ctype.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -235,18 +234,6 @@ wad_file_t *W_AddFile (char *filename)
 
     return wad_file;
 }
-
-
-
-//
-// W_NumLumps
-//
-int W_NumLumps (void)
-{
-    return numlumps;
-}
-
-
 
 //
 // W_CheckNumForName
@@ -466,73 +453,6 @@ void W_ReleaseLumpName(char *name)
 {
     W_ReleaseLumpNum(W_GetNumForName(name));
 }
-
-#if 0
-
-//
-// W_Profile
-//
-int		info[2500][10];
-int		profilecount;
-
-void W_Profile (void)
-{
-    int		i;
-    memblock_t*	block;
-    void*	ptr;
-    char	ch;
-    FILE*	f;
-    int		j;
-    char	name[9];
-	
-	
-    for (i=0 ; i<numlumps ; i++)
-    {	
-	ptr = lumpinfo[i].cache;
-	if (!ptr)
-	{
-	    ch = ' ';
-	    continue;
-	}
-	else
-	{
-	    block = (memblock_t *) ( (byte *)ptr - sizeof(memblock_t));
-	    if (block->tag < PU_PURGELEVEL)
-		ch = 'S';
-	    else
-		ch = 'P';
-	}
-	info[i][profilecount] = ch;
-    }
-    profilecount++;
-#if ORIGCODE
-    f = fopen ("waddump.txt","w");
-    name[8] = 0;
-
-    for (i=0 ; i<numlumps ; i++)
-    {
-	memcpy (name,lumpinfo[i].name,8);
-
-	for (j=0 ; j<8 ; j++)
-	    if (!name[j])
-		break;
-
-	for ( ; j<8 ; j++)
-	    name[j] = ' ';
-
-	fprintf (f,"%s ",name);
-
-	for (j=0 ; j<profilecount ; j++)
-	    fprintf (f,"    %c",info[i][j]);
-
-	fprintf (f,"\n");
-    }
-    fclose (f);
-#endif
-}
-
-
-#endif
 
 // Generate a hash table for fast lookups
 

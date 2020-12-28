@@ -17,8 +17,6 @@
 //	Switches, buttons. Two-state animation. Exits.
 //
 
-#include <stdio.h>
-
 #include "i_system.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -145,7 +143,7 @@ void P_InitSwitchList(void)
 //
 // Start a button counting down till it turns off.
 //
-void
+static void
 P_StartButton
 ( line_t*	line,
   bwhere_e	w,

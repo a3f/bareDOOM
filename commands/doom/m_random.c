@@ -16,6 +16,8 @@
 //	Random number LUT.
 //
 
+#include "m_random.h"
+
 //
 // M_Random
 // Returns a 0-255 number

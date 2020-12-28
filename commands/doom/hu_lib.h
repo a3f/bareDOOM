@@ -22,7 +22,7 @@
 #include "r_defs.h"
 
 // font stuff
-#define HU_CHARERASE	KEY_BACKSPACE
+#define HU_CHARERASE	DOOM_KEY_BACKSPACE
 
 #define HU_MAXLINES		4
 #define HU_MAXLINELENGTH	80

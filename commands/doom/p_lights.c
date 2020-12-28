@@ -36,7 +36,7 @@
 //
 // T_FireFlicker
 //
-void T_FireFlicker (fireflicker_t* flick)
+static void T_FireFlicker (fireflicker_t* flick)
 {
     int	amount;
 	
@@ -58,7 +58,7 @@ void T_FireFlicker (fireflicker_t* flick)
 //
 // P_SpawnFireFlicker
 //
-void P_SpawnFireFlicker (sector_t*	sector)
+void P_SpawnFireFlicker (doomsector_t*	sector)
 {
     fireflicker_t*	flick;
 	
@@ -114,7 +114,7 @@ void T_LightFlash (lightflash_t* flash)
 // After the map has been loaded, scan each sector
 // for specials that spawn thinkers
 //
-void P_SpawnLightFlash (sector_t*	sector)
+void P_SpawnLightFlash (doomsector_t*	sector)
 {
     lightflash_t*	flash;
 
@@ -172,7 +172,7 @@ void T_StrobeFlash (strobe_t*		flash)
 //
 void
 P_SpawnStrobeFlash
-( sector_t*	sector,
+( doomsector_t*	sector,
   int		fastOrSlow,
   int		inSync )
 {
@@ -208,7 +208,7 @@ P_SpawnStrobeFlash
 void EV_StartLightStrobing(line_t*	line)
 {
     int		secnum;
-    sector_t*	sec;
+    doomsector_t*	sec;
 	
     secnum = -1;
     while ((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
@@ -231,8 +231,8 @@ void EV_TurnTagLightsOff(line_t* line)
     int			i;
     int			j;
     int			min;
-    sector_t*		sector;
-    sector_t*		tsec;
+    doomsector_t*		sector;
+    doomsector_t*		tsec;
     line_t*		templine;
 	
     sector = sectors;
@@ -267,8 +267,8 @@ EV_LightTurnOn
 {
     int		i;
     int		j;
-    sector_t*	sector;
-    sector_t*	temp;
+    doomsector_t*	sector;
+    doomsector_t*	temp;
     line_t*	templine;
 	
     sector = sectors;
@@ -331,7 +331,7 @@ void T_Glow(glow_t*	g)
 }
 
 
-void P_SpawnGlowingLight(sector_t*	sector)
+void P_SpawnGlowingLight(doomsector_t*	sector)
 {
     glow_t*	g;
 	

@@ -23,7 +23,7 @@
 
 
 #include <stdlib.h>
-#include <math.h>
+#include <stdio.h>
 
 
 #include "doomdef.h"
@@ -34,6 +34,8 @@
 
 #include "r_local.h"
 #include "r_sky.h"
+#include "r_bsp.h"
+#include "r_main.h"
 
 
 
@@ -419,7 +421,7 @@ R_PointToDist
 //
 // R_InitPointToAngle
 //
-void R_InitPointToAngle (void)
+static void R_InitPointToAngle (void)
 {
     // UNUSED - now getting from tables.c
 #if 0
@@ -502,7 +504,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
 //
 // R_InitTables
 //
-void R_InitTables (void)
+static void R_InitTables (void)
 {
     // UNUSED: now getting from tables.c
 #if 0
@@ -537,7 +539,7 @@ void R_InitTables (void)
 //
 // R_InitTextureMapping
 //
-void R_InitTextureMapping (void)
+static void R_InitTextureMapping (void)
 {
     int			i;
     int			x;
@@ -607,7 +609,7 @@ void R_InitTextureMapping (void)
 //
 #define DISTMAP		2
 
-void R_InitLightTables (void)
+static void R_InitLightTables (void)
 {
     int		i;
     int		j;
@@ -820,7 +822,7 @@ R_PointInSubsector
 //
 // R_SetupFrame
 //
-void R_SetupFrame (player_t* player)
+static void R_SetupFrame (player_t* player)
 {		
     int		i;
     

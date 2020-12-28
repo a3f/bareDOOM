@@ -16,8 +16,6 @@
 //	Put all global tate variables here.
 //
 
-#include <stdio.h>
-
 #include "doomstat.h"
 
 
@@ -29,7 +27,3 @@ char *gamedescription;
 
 // Set if homebrew PWAD stuff has been added.
 boolean	modifiedgame;
-
-
-
-

@@ -19,9 +19,7 @@
 //	Functions to blit a block to the screen.
 //
 
-#include <stdio.h>
 #include <string.h>
-#include <math.h>
 
 #include "i_system.h"
 
@@ -650,7 +648,7 @@ typedef struct
 // WritePCXfile
 //
 
-void WritePCXfile(char *filename, byte *data,
+static void WritePCXfile(char *filename, byte *data,
                   int width, int height,
                   byte *palette)
 {
@@ -845,88 +843,5 @@ void V_ScreenShot(char *format)
 
 void V_DrawMouseSpeedBox(int speed)
 {
-    extern int usemouse;
-    int bgcolor, bordercolor, red, black, white, yellow;
-    int box_x, box_y;
-    int original_speed;
-    int redline_x;
-    int linelen;
-
-    // Get palette indices for colors for widget. These depend on the
-    // palette of the game being played.
-
-    bgcolor = I_GetPaletteIndex(0x77, 0x77, 0x77);
-    bordercolor = I_GetPaletteIndex(0x55, 0x55, 0x55);
-    red = I_GetPaletteIndex(0xff, 0x00, 0x00);
-    black = I_GetPaletteIndex(0x00, 0x00, 0x00);
-    yellow = I_GetPaletteIndex(0xff, 0xff, 0x00);
-    white = I_GetPaletteIndex(0xff, 0xff, 0xff);
-
-    // If the mouse is turned off or acceleration is turned off, don't
-    // draw the box at all.
-
-    if (!usemouse || fabs(mouse_acceleration - 1) < 0.01)
-    {
-        return;
-    }
-
-    // Calculate box position
-
-    box_x = SCREENWIDTH - MOUSE_SPEED_BOX_WIDTH - 10;
-    box_y = 15;
-
-    V_DrawFilledBox(box_x, box_y,
-                    MOUSE_SPEED_BOX_WIDTH, MOUSE_SPEED_BOX_HEIGHT, bgcolor);
-    V_DrawBox(box_x, box_y,
-              MOUSE_SPEED_BOX_WIDTH, MOUSE_SPEED_BOX_HEIGHT, bordercolor);
-
-    // Calculate the position of the red line.  This is 1/3 of the way
-    // along the box.
-
-    redline_x = MOUSE_SPEED_BOX_WIDTH / 3;
-
-    // Undo acceleration and get back the original mouse speed
-
-    if (speed < mouse_threshold)
-    {
-        original_speed = speed;
-    }
-    else
-    {
-        original_speed = speed - mouse_threshold;
-        original_speed = (int) (original_speed / mouse_acceleration);
-        original_speed += mouse_threshold;
-    }
-
-    // Calculate line length
-
-    linelen = (original_speed * redline_x) / mouse_threshold;
-
-    // Draw horizontal "thermometer" 
-
-    if (linelen > MOUSE_SPEED_BOX_WIDTH - 1)
-    {
-        linelen = MOUSE_SPEED_BOX_WIDTH - 1;
-    }
-
-    V_DrawHorizLine(box_x + 1, box_y + 4, MOUSE_SPEED_BOX_WIDTH - 2, black);
-
-    if (linelen < redline_x)
-    {
-        V_DrawHorizLine(box_x + 1, box_y + MOUSE_SPEED_BOX_HEIGHT / 2,
-                      linelen, white);
-    }
-    else
-    {
-        V_DrawHorizLine(box_x + 1, box_y + MOUSE_SPEED_BOX_HEIGHT / 2,
-                        redline_x, white);
-        V_DrawHorizLine(box_x + redline_x, box_y + MOUSE_SPEED_BOX_HEIGHT / 2,
-                        linelen - redline_x, yellow);
-    }
-
-    // Draw red line
-
-    V_DrawVertLine(box_x + redline_x, box_y + 1,
-                 MOUSE_SPEED_BOX_HEIGHT - 2, red);
+	/* we don't support mouse input */
 }
-

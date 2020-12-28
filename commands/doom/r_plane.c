@@ -19,7 +19,6 @@
 //
 
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "i_system.h"
@@ -246,7 +245,7 @@ R_FindPlane
     check->minx = SCREENWIDTH;
     check->maxx = -1;
     
-    memset (check->top,0xff,sizeof(check->top));
+    memset (&top(check, 0),0xff,check->minx);
 		
     return check;
 }
@@ -290,7 +289,7 @@ R_CheckPlane
     }
 
     for (x=intrl ; x<= intrh ; x++)
-	if (pl->top[x] != 0xff)
+	if (top(pl, x) != 0xff)
 	    break;
 
     if (x > intrh)
@@ -311,7 +310,7 @@ R_CheckPlane
     pl->minx = start;
     pl->maxx = stop;
 
-    memset (pl->top,0xff,sizeof(pl->top));
+    memset (&top(pl, 0),0xff,SCREENWIDTH);
 		
     return pl;
 }
@@ -399,8 +398,8 @@ void R_DrawPlanes (void)
 	    dc_texturemid = skytexturemid;
 	    for (x=pl->minx ; x <= pl->maxx ; x++)
 	    {
-		dc_yl = pl->top[x];
-		dc_yh = pl->bottom[x];
+		dc_yl = top(pl, x);
+		dc_yh = bottom(pl, x);
 
 		if (dc_yl <= dc_yh)
 		{
@@ -417,7 +416,7 @@ void R_DrawPlanes (void)
         lumpnum = firstflat + flattranslation[pl->picnum];
 	ds_source = W_CacheLumpNum(lumpnum, PU_STATIC);
 	
-	planeheight = abs(pl->height-viewz);
+	planeheight = abs((int)(pl->height-viewz));
 	light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
 
 	if (light >= LIGHTLEVELS)
@@ -428,19 +427,19 @@ void R_DrawPlanes (void)
 
 	planezlight = zlight[light];
 
-	pl->top[pl->maxx+1] = 0xff;
-	pl->top[pl->minx-1] = 0xff;
-		
+	top(pl, pl->maxx + 1) = 0xff;
+	top(pl, pl->minx - 1) = 0xff;
+
 	stop = pl->maxx + 1;
 
 	for (x=pl->minx ; x<= stop ; x++)
 	{
-	    R_MakeSpans(x,pl->top[x-1],
-			pl->bottom[x-1],
-			pl->top[x],
-			pl->bottom[x]);
+	    R_MakeSpans(x,top(pl, x-1),
+			bottom(pl, x-1),
+			top(pl, x),
+			bottom(pl, x));
 	}
-	
+
         W_ReleaseLumpNum(lumpnum);
     }
 }

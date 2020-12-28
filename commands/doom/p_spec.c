@@ -21,8 +21,6 @@
 //
 
 
-#include <stdlib.h>
-
 #include "doomdef.h"
 #include "doomstat.h"
 
@@ -211,11 +209,11 @@ getSide
 
 //
 // getSector()
-// Will return a sector_t*
+// Will return a doomsector_t*
 //  given the number of the current sector,
 //  the line number and the side (0/1) that you want.
 //
-sector_t*
+doomsector_t*
 getSector
 ( int		currentSector,
   int		line,
@@ -243,13 +241,13 @@ twoSided
 
 //
 // getNextSector()
-// Return sector_t * of sector next to current.
+// Return doomsector_t * of sector next to current.
 // NULL if not two-sided line
 //
-sector_t*
+doomsector_t*
 getNextSector
 ( line_t*	line,
-  sector_t*	sec )
+  doomsector_t*	sec )
 {
     if (!(line->flags & ML_TWOSIDED))
 	return NULL;
@@ -266,11 +264,11 @@ getNextSector
 // P_FindLowestFloorSurrounding()
 // FIND LOWEST FLOOR HEIGHT IN SURROUNDING SECTORS
 //
-fixed_t	P_FindLowestFloorSurrounding(sector_t* sec)
+fixed_t	P_FindLowestFloorSurrounding(doomsector_t* sec)
 {
     int			i;
     line_t*		check;
-    sector_t*		other;
+    doomsector_t*		other;
     fixed_t		floor = sec->floorheight;
 	
     for (i=0 ;i < sec->linecount ; i++)
@@ -293,11 +291,11 @@ fixed_t	P_FindLowestFloorSurrounding(sector_t* sec)
 // P_FindHighestFloorSurrounding()
 // FIND HIGHEST FLOOR HEIGHT IN SURROUNDING SECTORS
 //
-fixed_t	P_FindHighestFloorSurrounding(sector_t *sec)
+fixed_t	P_FindHighestFloorSurrounding(doomsector_t *sec)
 {
     int			i;
     line_t*		check;
-    sector_t*		other;
+    doomsector_t*		other;
     fixed_t		floor = -500*FRACUNIT;
 	
     for (i=0 ;i < sec->linecount ; i++)
@@ -328,14 +326,14 @@ fixed_t	P_FindHighestFloorSurrounding(sector_t *sec)
 
 fixed_t
 P_FindNextHighestFloor
-( sector_t* sec,
+( doomsector_t* sec,
   int       currentheight )
 {
     int         i;
     int         h;
     int         min;
     line_t*     check;
-    sector_t*   other;
+    doomsector_t*   other;
     fixed_t     height = currentheight;
     fixed_t     heightlist[MAX_ADJOINING_SECTORS + 2];
 
@@ -389,11 +387,11 @@ P_FindNextHighestFloor
 // FIND LOWEST CEILING IN THE SURROUNDING SECTORS
 //
 fixed_t
-P_FindLowestCeilingSurrounding(sector_t* sec)
+P_FindLowestCeilingSurrounding(doomsector_t* sec)
 {
     int			i;
     line_t*		check;
-    sector_t*		other;
+    doomsector_t*		other;
     fixed_t		height = INT_MAX;
 	
     for (i=0 ;i < sec->linecount ; i++)
@@ -414,11 +412,11 @@ P_FindLowestCeilingSurrounding(sector_t* sec)
 //
 // FIND HIGHEST CEILING IN THE SURROUNDING SECTORS
 //
-fixed_t	P_FindHighestCeilingSurrounding(sector_t* sec)
+fixed_t	P_FindHighestCeilingSurrounding(doomsector_t* sec)
 {
     int		i;
     line_t*	check;
-    sector_t*	other;
+    doomsector_t*	other;
     fixed_t	height = 0;
 	
     for (i=0 ;i < sec->linecount ; i++)
@@ -462,13 +460,13 @@ P_FindSectorFromLineTag
 //
 int
 P_FindMinSurroundingLight
-( sector_t*	sector,
+( doomsector_t*	sector,
   int		max )
 {
     int		i;
     int		min;
     line_t*	line;
-    sector_t*	check;
+    doomsector_t*	check;
 	
     min = max;
     for (i=0 ; i < sector->linecount ; i++)
@@ -1018,7 +1016,7 @@ P_ShootSpecialLine
 //
 void P_PlayerInSpecialSector (player_t* player)
 {
-    sector_t*	sector;
+    doomsector_t*	sector;
 	
     sector = player->mo->subsector->sector;
 
@@ -1176,7 +1174,7 @@ void P_UpdateSpecials (void)
 #define DONUT_FLOORPIC_DEFAULT 0x16
 
 static void DonutOverrun(fixed_t *s3_floorheight, short *s3_floorpic,
-                         line_t *line, sector_t *pillar_sector)
+                         line_t *line, doomsector_t *pillar_sector)
 {
     static int first = 1;
     static int tmp_s3_floorheight;
@@ -1256,9 +1254,9 @@ static void DonutOverrun(fixed_t *s3_floorheight, short *s3_floorpic,
 //
 int EV_DoDonut(line_t*	line)
 {
-    sector_t*		s1;
-    sector_t*		s2;
-    sector_t*		s3;
+    doomsector_t*		s1;
+    doomsector_t*		s2;
+    doomsector_t*		s3;
     int			secnum;
     int			rtn;
     int			i;
@@ -1373,7 +1371,7 @@ line_t*		linespeciallist[MAXLINEANIMS];
 // Parses command line parameters.
 void P_SpawnSpecials (void)
 {
-    sector_t*	sector;
+    doomsector_t*	sector;
     int		i;
 
     // See if -TIMER was specified.

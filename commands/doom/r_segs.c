@@ -21,7 +21,6 @@
 
 
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "i_system.h"
@@ -31,6 +30,7 @@
 
 #include "r_local.h"
 #include "r_sky.h"
+#include "r_segs.h"
 
 
 // OPTIMIZE: closed two sided lines as single sided
@@ -196,7 +196,7 @@ R_RenderMaskedSegRange
 #define HEIGHTBITS		12
 #define HEIGHTUNIT		(1<<HEIGHTBITS)
 
-void R_RenderSegLoop (void)
+static void R_RenderSegLoop (void)
 {
     angle_t		angle;
     unsigned		index;
@@ -226,8 +226,8 @@ void R_RenderSegLoop (void)
 
 	    if (top <= bottom)
 	    {
-		ceilingplane->top[rw_x] = top;
-		ceilingplane->bottom[rw_x] = bottom;
+		top(ceilingplane, rw_x) = top;
+		bottom(ceilingplane, rw_x) = bottom;
 	    }
 	}
 		
@@ -244,8 +244,8 @@ void R_RenderSegLoop (void)
 		top = ceilingclip[rw_x]+1;
 	    if (top <= bottom)
 	    {
-		floorplane->top[rw_x] = top;
-		floorplane->bottom[rw_x] = bottom;
+		top(floorplane, rw_x) = top;
+		bottom(floorplane, rw_x) = bottom;
 	    }
 	}
 	
@@ -396,7 +396,7 @@ R_StoreWallRange
     
     // calculate rw_distance for scale calculation
     rw_normalangle = curline->angle + ANG90;
-    offsetangle = abs(rw_normalangle-rw_angle1);
+    offsetangle = abs((int)(rw_normalangle-rw_angle1));
     
     if (offsetangle > ANG90)
 	offsetangle = ANG90;
