@@ -22,24 +22,10 @@
 
 // Used to do dehacked text substitutions throughout the program
 
-#ifdef FEATURE_DEHACKED
-
-char *DEH_String(char *s);
-void DEH_printf(char *fmt, ...);
-void DEH_fprintf(FILE *fstream, char *fmt, ...);
-void DEH_snprintf(char *buffer, unsigned len, char *fmt, ...);
-void DEH_AddStringReplacement(char *from_text, char *to_text);
-
-
-#else
-
 #define DEH_String(x) (x)
 #define DEH_printf printf
 #define DEH_fprintf fprintf
 #define DEH_snprintf snprintf
 #define DEH_AddStringReplacement(x, y)
 
-#endif
-
 #endif /* #ifndef DEH_STR_H */
-

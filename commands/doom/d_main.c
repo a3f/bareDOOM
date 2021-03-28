@@ -1232,24 +1232,6 @@ void D_DoomMain (void)
     
     // find which dir to use for config files
 
-#ifdef _WIN32
-
-    //!
-    // @platform windows
-    // @vanilla
-    //
-    // Save configuration data and savegames in c:\doomdata,
-    // allowing play from CD.
-    //
-
-    if (M_ParmExists("-cdrom"))
-    {
-        printf(D_CDROM);
-
-        M_SetConfigDir("c:\\doomdata\\");
-    }
-    else
-#endif
     {
         // Auto-detect the configuration dir.
 
@@ -1356,16 +1338,6 @@ void D_DoomMain (void)
         DEH_AddStringReplacement("M_GDLOW", "M_MSGOFF");
     }
 
-#ifdef FEATURE_DEHACKED
-    // Load Dehacked patches specified on the command line with -deh.
-    // Note that there's a very careful and deliberate ordering to how
-    // Dehacked patches are loaded. The order we use is:
-    //  1. IWAD dehacked patches.
-    //  2. Command line dehacked patches specified with -deh.
-    //  3. PWAD dehacked patches in DEHACKED lumps.
-    DEH_ParseCommandLine();
-#endif
-
     // Load PWAD files.
     modifiedgame = W_ParseCommandLine();
 
@@ -1438,14 +1410,6 @@ void D_DoomMain (void)
     // we've finished loading Dehacked patches.
     D_SetGameDescription();
 
-#ifdef _WIN32
-    // In -cdrom mode, we write savegames to c:\doomdata as well as configs.
-    if (M_ParmExists("-cdrom"))
-    {
-        savegamedir = configdir;
-    }
-    else
-#endif
     {
         savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
     }

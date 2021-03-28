@@ -30,11 +30,7 @@
 // to disk.
 //
 
-#ifdef __GNUC__
 #define PACKEDATTR __attribute__((packed))
-#else
-#define PACKEDATTR
-#endif
 
 // C99 integer types; with gcc we just use this.  Other compilers 
 // should add conditional statements that define the C99 types.
@@ -46,14 +42,6 @@
 
 #include <inttypes.h>
 
-#if defined(__cplusplus)
-
-// Use builtin bool type with C++.
-
-typedef bool boolean;
-
-#else
-
 typedef int boolean;
 
 #ifndef false
@@ -63,27 +51,14 @@ typedef int boolean;
 #define true 1
 #endif
 
-#endif
-
 typedef uint8_t byte;
 
 #include <limits.h>
-
-#ifdef _WIN32
-
-#define DIR_SEPARATOR '\\'
-#define DIR_SEPARATOR_S "\\"
-#define PATH_SEPARATOR ';'
-
-#else
 
 #define DIR_SEPARATOR '/'
 #define DIR_SEPARATOR_S "/"
 #define PATH_SEPARATOR ':'
 
-#endif
-
 #define arrlen(array) (sizeof(array) / sizeof(*array))
 
 #endif
-
