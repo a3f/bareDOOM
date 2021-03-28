@@ -3,7 +3,6 @@
 
 #include "doomtype.h"
 
-#ifdef __BAREBOX__
 typedef const void FILE;
 
 #define fd2fp(fd) ((FILE *)(uintptr_t)fd)
@@ -30,8 +29,6 @@ enum { SEEK_SET = 0, SEEK_CUR = 1, SEEK_END = 2 };
 
 #define fprintf(fp, ...) dprintf(fp2fd(fp), __VA_ARGS__)
 #define vfprintf(fp, ...) vprintf(__VA_ARGS__)
-
-#endif
 
 #include_next <../../include/stdio.h>
 

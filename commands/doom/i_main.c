@@ -17,12 +17,10 @@
 //
 //
 
-#ifdef __BAREBOX__
 #include <command.h>
 #include <envfs.h>
 #include <init.h>
 #include <bthread.h>
-#endif
 
 #include "doom.h"
 #include "z_zone.h"
@@ -54,8 +52,6 @@ static int doom_main(int argc, char **argv)
 	return doom ? 0 : -ENOMEM;
 }
 
-#ifdef __BAREBOX__
-
 BAREBOX_CMD_HELP_START(doom)
 	BAREBOX_CMD_HELP_TEXT("This command runs the original DOOM ported to barebox")
 BAREBOX_CMD_HELP_END
@@ -66,12 +62,3 @@ BAREBOX_CMD_START(doom)
 	BAREBOX_CMD_GROUP(CMD_GRP_MISC)
 	BAREBOX_CMD_HELP(cmd_doom_help)
 BAREBOX_CMD_END
-
-#else
-
-int main(int argc, char **argv)
-{
-    return doom_main(argc, argv);
-}
-
-#endif
