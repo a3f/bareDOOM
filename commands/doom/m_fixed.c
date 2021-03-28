@@ -16,7 +16,7 @@
 //	Fixed point implementation.
 //
 
-
+#include <linux/math64.h>
 
 #include "stdlib.h"
 
@@ -24,12 +24,6 @@
 #include "i_system.h"
 
 #include "m_fixed.h"
-
-#ifdef __BAREBOX__
-#include <linux/math64.h>
-#else
-#define div_s64(a, b) ((int64_t)(a) / (b))
-#endif
 
 
 

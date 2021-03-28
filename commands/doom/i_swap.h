@@ -20,8 +20,6 @@
 #ifndef __I_SWAP__
 #define __I_SWAP__
 
-#if defined(__BAREBOX__)
-
 #include <byteorder.h>
 
 #define SHORT(x)  ((signed short) le16_to_cpu(x))
@@ -33,12 +31,4 @@
 #define SYS_BIG_ENDIAN
 #endif
 
-#else
-
-#define SHORT(x)  ((signed short) (x))
-#define LONG(x)   ((signed int) (x))
-
-#define SYS_LITTLE_ENDIAN
-
-#endif
 #endif
