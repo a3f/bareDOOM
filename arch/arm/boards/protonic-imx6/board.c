@@ -70,6 +70,7 @@ struct prt_machine_data {
 	unsigned int hw_rev;
 	unsigned int i2c_addr;
 	unsigned int i2c_adapter;
+	unsigned int emmc_usdhc;
 	unsigned int flags;
 	int (*init)(struct prt_imx6_priv *priv);
 };
@@ -170,6 +171,9 @@ static int prt_imx6_set_mac(struct prt_imx6_priv *priv,
 		dev_err(dev, "Cannot find FEC!\n");
 		return -ENODEV;
 	}
+
+	if (!of_device_is_available(node))
+		return 0;
 
 	if (!is_valid_ether_addr(&rfid->mac[0])) {
 		unsigned char ethaddr_str[sizeof("xx:xx:xx:xx:xx:xx")];
@@ -340,7 +344,7 @@ static void prt_imx6_check_usb_boot(void *data)
 
 	second_word++;
 	if (strncmp(second_word, "usb", 3) == 0) {
-		bootsrc = usbdisk;
+		bootsrc = "usb";
 	} else if (strncmp(second_word, "recovery", 8) == 0) {
 		bootsrc = "recovery";
 	} else {
@@ -408,6 +412,7 @@ static int prt_imx6_bbu(struct prt_imx6_priv *priv)
 {
 	const struct prt_machine_data *dcfg = priv->dcfg;
 	u32 emmc_flags = 0;
+	char *devicefile;
 	int ret;
 
 	if (dcfg->flags & PRT_IMX6_BOOTSRC_SPI_NOR) {
@@ -419,12 +424,13 @@ static int prt_imx6_bbu(struct prt_imx6_priv *priv)
 		emmc_flags = BBU_HANDLER_FLAG_DEFAULT;
 	}
 
-	ret = imx6_bbu_internal_mmcboot_register_handler("eMMC", "/dev/mmc2",
-						   emmc_flags);
-	if (ret)
+	devicefile = basprintf("mmc%d", dcfg->emmc_usdhc);
+	if (!devicefile) {
+		ret = -ENOMEM;
 		goto exit_bbu;
-
-	ret = imx6_bbu_internal_mmc_register_handler("SD", "/dev/mmc0", 0);
+	}
+	ret = imx6_bbu_internal_mmcboot_register_handler("eMMC", devicefile,
+						   emmc_flags);
 	if (ret)
 		goto exit_bbu;
 
@@ -808,6 +814,7 @@ static const struct prt_machine_data prt_imx6_cfg_alti6p[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_EMMC,
 	}, {
 		.hw_id = UINT_MAX
@@ -820,6 +827,7 @@ static const struct prt_machine_data prt_imx6_cfg_victgo[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.init = prt_imx6_init_victgo,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
@@ -833,12 +841,14 @@ static const struct prt_machine_data prt_imx6_cfg_vicut1[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x50,
 		.i2c_adapter = 1,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
 		.hw_id = HW_TYPE_VICUT1,
 		.hw_rev = 1,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.init = prt_imx6_init_kvg_yaco,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
@@ -846,6 +856,7 @@ static const struct prt_machine_data prt_imx6_cfg_vicut1[] = {
 		.hw_rev = 1,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.init = prt_imx6_init_kvg_new,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
@@ -859,12 +870,14 @@ static const struct prt_machine_data prt_imx6_cfg_vicut1q[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x50,
 		.i2c_adapter = 1,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
 		.hw_id = HW_TYPE_VICUT1,
 		.hw_rev = 1,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.init = prt_imx6_init_kvg_yaco,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
@@ -872,6 +885,7 @@ static const struct prt_machine_data prt_imx6_cfg_vicut1q[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.init = prt_imx6_init_kvg_yaco,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
@@ -879,6 +893,7 @@ static const struct prt_machine_data prt_imx6_cfg_vicut1q[] = {
 		.hw_rev = 1,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.init = prt_imx6_init_kvg_new,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
@@ -892,6 +907,7 @@ static const struct prt_machine_data prt_imx6_cfg_vicutp[] = {
 		.hw_rev = 1,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.init = prt_imx6_init_kvg_new,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
@@ -905,6 +921,7 @@ static const struct prt_machine_data prt_imx6_cfg_lanmcu[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_EMMC | PRT_IMX6_BOOTCHOOSER,
 	}, {
 		.hw_id = UINT_MAX
@@ -917,6 +934,7 @@ static const struct prt_machine_data prt_imx6_cfg_plybas[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR | PRT_IMX6_USB_LONG_DELAY,
 	}, {
 		.hw_id = UINT_MAX
@@ -929,6 +947,7 @@ static const struct prt_machine_data prt_imx6_cfg_plym2m[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR | PRT_IMX6_USB_LONG_DELAY,
 	}, {
 		.hw_id = UINT_MAX
@@ -941,8 +960,9 @@ static const struct prt_machine_data prt_imx6_cfg_prti6g[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 1,
 		.init = prt_imx6_init_prti6g,
-		.flags = PRT_IMX6_BOOTSRC_EMMC,
+		.flags = PRT_IMX6_BOOTSRC_EMMC | PRT_IMX6_BOOTCHOOSER,
 	}, {
 		.hw_id = UINT_MAX
 	},
@@ -954,12 +974,14 @@ static const struct prt_machine_data prt_imx6_cfg_prti6q[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 2,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
 		.hw_id = HW_TYPE_PRTI6Q,
 		.hw_rev = 1,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
 		.hw_id = UINT_MAX
@@ -972,6 +994,7 @@ static const struct prt_machine_data prt_imx6_cfg_prtmvt[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
 		.hw_id = UINT_MAX
@@ -984,6 +1007,7 @@ static const struct prt_machine_data prt_imx6_cfg_prtrvt[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_SPI_NOR,
 	}, {
 		.hw_id = UINT_MAX
@@ -996,6 +1020,7 @@ static const struct prt_machine_data prt_imx6_cfg_prtvt7[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_EMMC | PRT_IMX6_BOOTCHOOSER,
 	}, {
 		.hw_id = UINT_MAX
@@ -1008,6 +1033,7 @@ static const struct prt_machine_data prt_imx6_cfg_prtwd2[] = {
 		.hw_rev = 0,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_EMMC,
 	}, {
 		.hw_id = UINT_MAX
@@ -1020,6 +1046,7 @@ static const struct prt_machine_data prt_imx6_cfg_prtwd3[] = {
 		.hw_rev = 2,
 		.i2c_addr = 0x51,
 		.i2c_adapter = 0,
+		.emmc_usdhc = 2,
 		.flags = PRT_IMX6_BOOTSRC_EMMC,
 	}, {
 		.hw_id = UINT_MAX
