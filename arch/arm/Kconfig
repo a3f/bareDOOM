@@ -205,6 +205,20 @@ config ARCH_STM32MP
 	select ARM_SMCCC
 	select ARM_USE_COMPRESSED_DTB
 
+config ARCH_V7M
+	bool "V7-M (Cortex-M) MCUs (STM32)"
+	select CPU_V7M
+	select THUMB2_BAREBOX
+	select HAVE_PBL_MULTI_IMAGES
+	select CLKDEV_LOOKUP
+	select COMMON_CLK
+	select COMMON_CLK_OF_PROVIDER
+	select HAVE_CLK
+	select GPIOLIB
+	select ARCH_HAS_RESET_CONTROLLER
+	select ARM_AMBA
+	select ARM_USE_COMPRESSED_DTB
+
 config ARCH_VERSATILE
 	bool "ARM Versatile boards (ARM926EJ-S)"
 	select GPIOLIB
@@ -307,6 +321,7 @@ source "arch/arm/mach-rockchip/Kconfig"
 source "arch/arm/mach-samsung/Kconfig"
 source "arch/arm/mach-socfpga/Kconfig"
 source "arch/arm/mach-stm32mp/Kconfig"
+source "arch/arm/mach-v7m/Kconfig"
 source "arch/arm/mach-versatile/Kconfig"
 source "arch/arm/mach-vexpress/Kconfig"
 source "arch/arm/mach-tegra/Kconfig"

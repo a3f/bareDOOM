@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+if ARCH_V7M
+
+config ARCH_STM32MCU
+	bool
+	select ARCH_STM32
+
+endif
