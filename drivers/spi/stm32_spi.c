@@ -147,6 +147,8 @@ enum spi_comm_type {
 	SPI_FULL_DUPLEX,
 	SPI_SIMPLEX_TX,
 	SPI_SIMPLEX_RX,
+	SPI_3WIRE_TX,
+	SPI_3WIRE_RX,
 };
 
 struct stm32_spi_cfg;
@@ -606,10 +608,23 @@ static enum spi_comm_type stm32_spi_communication_type(struct spi_device *spi_de
 {
 	enum spi_comm_type type = SPI_FULL_DUPLEX;
 
-	if (!transfer->tx_buf)
-		type = SPI_SIMPLEX_RX;
-	else if (!transfer->rx_buf)
-		type = SPI_SIMPLEX_TX;
+	if (spi_dev->mode & SPI_3WIRE) { /* MISO/MOSI signals shared */
+		/*
+		 * SPI_3WIRE and xfer->tx_buf != NULL and xfer->rx_buf != NULL
+		 * is forbidden and unvalidated by SPI subsystem so depending
+		 * on the valid buffer, we can determine the direction of the
+		 * transfer.
+		 */
+		if (!transfer->tx_buf)
+			type = SPI_3WIRE_RX;
+		else
+			type = SPI_3WIRE_TX;
+	} else {
+		if (!transfer->tx_buf)
+			type = SPI_SIMPLEX_RX;
+		else if (!transfer->rx_buf)
+			type = SPI_SIMPLEX_TX;
+	}
 
 	return type;
 }
@@ -666,14 +681,23 @@ static int stm32_spi_transfer_one(struct spi_device *spi_dev,
  */
 static int stm32f4_spi_set_mode(struct stm32_spi_priv *priv, enum spi_comm_type comm_type)
 {
-	if (comm_type == SPI_SIMPLEX_TX) {
+
+	if (comm_type == SPI_3WIRE_TX || comm_type == SPI_SIMPLEX_TX) {
 		setbits_le32(priv->base + STM32F4_SPI_CR1,
 			     STM32F4_SPI_CR1_BIDIMODE |
 			     STM32F4_SPI_CR1_BIDIOE);
-	} else {
+	} else if (comm_type == SPI_FULL_DUPLEX ||
+		   comm_type == SPI_SIMPLEX_RX) {
 		clrbits_le32(priv->base + STM32F4_SPI_CR1,
 			     STM32F4_SPI_CR1_BIDIMODE |
 			     STM32F4_SPI_CR1_BIDIOE);
+	} else if (comm_type == SPI_3WIRE_RX) {
+		setbits_le32(priv->base + STM32F4_SPI_CR1,
+					STM32F4_SPI_CR1_BIDIMODE);
+		clrbits_le32(priv->base + STM32F4_SPI_CR1,
+					STM32F4_SPI_CR1_BIDIOE);
+	} else {
+		return -EINVAL;
 	}
 
 	return 0;
@@ -701,12 +725,14 @@ static int stm32f4_spi_transfer_one(struct stm32_spi_priv *priv,
 
 		sr = readl(priv->base + STM32F4_SPI_SR);
 
-		if (priv->cur_mode == SPI_SIMPLEX_TX) {
+		if (priv->cur_mode == SPI_SIMPLEX_TX ||
+		    priv->cur_mode == SPI_3WIRE_TX) {
 			/* OVR flag shouldn't be handled for TX only mode */
 			sr &= ~(STM32F4_SPI_SR_OVR | STM32F4_SPI_SR_RXNE);
 		}
 
-		if (priv->cur_mode == SPI_FULL_DUPLEX || priv->cur_mode == SPI_SIMPLEX_RX) {
+		if (priv->cur_mode == SPI_FULL_DUPLEX ||
+		    priv->cur_mode == SPI_SIMPLEX_RX || priv->cur_mode == SPI_3WIRE_RX) {
 			/* TXE flag is set and is handled when RXNE flag occurs */
 			sr &= ~STM32F4_SPI_SR_TXE;
 		}
@@ -752,12 +778,19 @@ static int stm32h7_spi_set_mode(struct stm32_spi_priv *priv,
 {
 	u32 mode;
 
-	if (comm_type == SPI_SIMPLEX_RX)
+	if (comm_type == SPI_3WIRE_RX) {
+		mode = STM32H7_SPI_HALF_DUPLEX;
+		clrbits_le32(priv->base + STM32H7_SPI_CR1, STM32H7_SPI_CR1_HDDIR);
+	} else if (comm_type == SPI_3WIRE_TX) {
+		mode = STM32H7_SPI_HALF_DUPLEX;
+		setbits_le32(priv->base + STM32H7_SPI_CR1, STM32H7_SPI_CR1_HDDIR);
+	} else if (comm_type == SPI_SIMPLEX_RX) {
 		mode = STM32H7_SPI_SIMPLEX_RX;
-	else if (comm_type == SPI_SIMPLEX_TX)
+	} else if (comm_type == SPI_SIMPLEX_TX) {
 		mode = STM32H7_SPI_SIMPLEX_TX;
-	else
+	} else {
 		mode = STM32H7_SPI_FULL_DUPLEX;
+	}
 
 	clrsetbits_le32(priv->base + STM32H7_SPI_CFG2, STM32H7_SPI_CFG2_COMM,
 			mode << STM32H7_SPI_CFG2_COMM_SHIFT);

@@ -309,6 +309,14 @@ static int __spi_validate(struct spi_device *spi, struct spi_message *message)
 		if (ctlr->max_speed_hz && xfer->speed_hz > ctlr->max_speed_hz)
 			xfer->speed_hz = ctlr->max_speed_hz;
 
+		/* Half-duplex links include original MicroWire, and ones with
+		 * only one data pin like SPI_3WIRE (switches direction) or where
+		 * either MOSI or MISO is missing.  They can also be caused by
+		 * software limitations.
+		 */
+		if ((spi->mode & SPI_3WIRE) && xfer->rx_buf && xfer->tx_buf)
+			return -EINVAL;
+
 		/*
 		 * SPI transfer length should be multiple of SPI word size
 		 * where SPI word size should be power-of-two multiple
