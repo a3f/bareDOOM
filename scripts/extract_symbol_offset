@@ -3,8 +3,13 @@
 symbol="$1"
 file="$2"
 
+strip_leading_zeroes ()
+{
+	sed 's/^[0]*\([0-9]\)/\1/'
+}
+
 # extract symbol offset from file, remove leading zeros
-ofs=$(${CROSS_COMPILE}nm -t d $file | grep "\<$symbol$" | cut -d ' ' -f1 | sed "s/^[0]*//")
+ofs=$(${CROSS_COMPILE}nm -t d $file | grep "\<$symbol$" | cut -d ' ' -f1 | strip_leading_zeroes)
 
 if [ -z "${ofs}" ]; then
 	echo "symbol $symbol not found in $file"
