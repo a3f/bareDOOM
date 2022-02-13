@@ -7,8 +7,13 @@ file="$2"
 match=$(${CROSS_COMPILE}nm -St d $file | grep "\<$symbol$")
 
 if [ -z "${match}" ]; then
-	echo "symbol $symbol not found in $file"
-	exit 1
+	match=$(${CROSS_COMPILE}size -A -d $file | grep "^$symbol\>")
+	if [ -z "${match}" ]; then
+		echo "symbol $symbol not found in $file"
+		exit 1
+	fi
+	set $match
+	match="$3 $2 X $1"
 fi
 
 strip_leading_zeroes ()
