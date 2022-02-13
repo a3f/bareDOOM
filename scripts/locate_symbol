@@ -1,0 +1,23 @@
+#!/bin/sh
+
+symbol="$1"
+file="$2"
+
+# extract symbol offset from file, remove leading zeros
+match=$(${CROSS_COMPILE}nm -St d $file | grep "\<$symbol$")
+
+if [ -z "${match}" ]; then
+	echo "symbol $symbol not found in $file"
+	exit 1
+fi
+
+strip_leading_zeroes ()
+{
+	sed 's/^[0]*\([0-9]\)/\1/'
+}
+
+out="$(echo "$match" | cut -d ' ' -f1 | strip_leading_zeroes)"
+if [ "$(echo "$match" | wc -w)" -eq 4 ]; then
+	out="$out $(echo "$match" | cut -d ' ' -f2 | strip_leading_zeroes)"
+fi
+echo "$out"

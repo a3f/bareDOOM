@@ -83,11 +83,11 @@ $(obj)/%.pblb: $(obj)/%.pbl FORCE
 #                             compressed payload
 #
 	$(eval PBL_CODE_SIZE_$* = \
-		$(shell $(srctree)/scripts/extract_symbol_offset pbl_code_size $^))
+		$(firstword $(shell $(srctree)/scripts/locate_symbol pbl_code_size $^)))
 	$(eval PBL_MEMORY_SIZE_$*= \
-		$(shell $(srctree)/scripts/extract_symbol_offset pbl_memory_size $^))
+		$(firstword $(shell $(srctree)/scripts/locate_symbol pbl_memory_size $^)))
 	$(eval PBL_IMAGE_SIZE_$*= \
-		$(shell $(srctree)/scripts/extract_symbol_offset pbl_image_size $^))
+		$(firstword $(shell $(srctree)/scripts/locate_symbol pbl_image_size $^)))
 
 #
 # if MAX_PBL_xxx_SIZE_$(symbol) is defined it contains the maximum size the
