@@ -20,8 +20,22 @@ enum gpiod_flags {
 	GPIOD_OUT_HIGH	= GPIOF_OUT_INIT_ACTIVE,
 };
 
+#ifdef CONFIG_GPIOLIB
+int __gpiod_get(struct device_d *dev, const char *_con_id,
+		int idx, enum gpiod_flags flags);
+#else
+static inline int __gpiod_get(struct device_d *dev, const char *_con_id,
+			      int idx, enum gpiod_flags flags)
+{
+	return -ENOSYS;
+}
+#endif
+
 /* returned gpio descriptor can be passed to any normal gpio_* function */
-int gpiod_get(struct device_d *dev, const char *_con_id, enum gpiod_flags flags);
+static inline int gpiod_get(struct device_d *dev, const char *_con_id, enum gpiod_flags flags)
+{
+	return __gpiod_get(dev, _con_id, 0, flags);
+}
 
 static inline void gpiod_set_value(unsigned gpio, bool value)
 {

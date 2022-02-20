@@ -562,7 +562,7 @@ static const char *gpio_suffixes[] = {
 };
 
 /* Linux compatibility helper: Get a GPIO descriptor from device tree */
-int gpiod_get(struct device_d *dev, const char *_con_id, enum gpiod_flags flags)
+int __gpiod_get(struct device_d *dev, const char *_con_id, int idx, enum gpiod_flags flags)
 {
 	struct device_node *np = dev->device_node;
 	enum of_gpio_flags of_flags;
@@ -583,7 +583,7 @@ int gpiod_get(struct device_d *dev, const char *_con_id, enum gpiod_flags flags)
 		if (!con_id)
 			return -ENOMEM;
 
-		gpio = of_get_named_gpio_flags(np, con_id, 0, &of_flags);
+		gpio = of_get_named_gpio_flags(np, con_id, idx, &of_flags);
 		free(con_id);
 
 		if (gpio_is_valid(gpio))
