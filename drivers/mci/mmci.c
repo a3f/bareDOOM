@@ -35,6 +35,7 @@ static unsigned long fmax = 515633;
  *	      is asserted (likewise for RX)
  * @fifohalfsize: number of bytes that can be written when MCI_TXFIFOHALFEMPTY
  *		  is asserted (likewise for RX)
+ * @f_max:     maximum bus frequency
  * @sdio: variant supports SDIO
  * @st_clkdiv: true if using a ST-specific clock divider algorithm
  * @blksz_datactrl16: true if Block size is at b16..b30 position in datactrl register
@@ -47,6 +48,7 @@ struct variant_data {
 	unsigned int		datalength_bits;
 	unsigned int		fifosize;
 	unsigned int		fifohalfsize;
+	unsigned int		f_max;
 	bool			sdio;
 	bool			st_clkdiv;
 	bool			blksz_datactrl16;
@@ -59,6 +61,7 @@ static struct variant_data variant_arm = {
 	.fifohalfsize		= 8 * 4,
 	.datalength_bits	= 16,
 	.pwrreg_powerup		= MCI_PWR_UP,
+	.f_max			= 100000000,
 };
 
 static struct variant_data variant_arm_extended_fifo = {
@@ -66,6 +69,7 @@ static struct variant_data variant_arm_extended_fifo = {
 	.fifohalfsize		= 64 * 4,
 	.datalength_bits	= 16,
 	.pwrreg_powerup		= MCI_PWR_UP,
+	.f_max			= 100000000,
 };
 
 static struct variant_data variant_ux500 = {
@@ -78,6 +82,7 @@ static struct variant_data variant_ux500 = {
 	.st_clkdiv		= true,
 	.pwrreg_powerup		= MCI_PWR_ON,
 	.signal_direction	= true,
+	.f_max			= 100000000,
 };
 
 static struct variant_data variant_ux500v2 = {
@@ -91,6 +96,7 @@ static struct variant_data variant_ux500v2 = {
 	.blksz_datactrl16	= true,
 	.pwrreg_powerup		= MCI_PWR_ON,
 	.signal_direction	= true,
+	.f_max			= 100000000,
 };
 
 struct mmci_host {
@@ -614,8 +620,8 @@ static int mmci_probe(struct amba_device *dev, const struct amba_id *id)
 	 * so we try to adjust the clock down to this,
 	 * (if possible).
 	 */
-	if (host->mclk > 100000000) {
-		ret = clk_set_rate(clk, 100000000);
+	if (plat->f_max && host->mclk > plat->f_max) {
+		ret = clk_set_rate(clk, plat->f_max);
 		if (ret < 0)
 			goto clk_disable;
 		host->mclk = clk_get_rate(clk);
