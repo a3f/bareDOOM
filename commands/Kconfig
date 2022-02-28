@@ -2065,7 +2065,7 @@ config CMD_DOOM
 	prompt "DOOM"
 	depends on VIDEO
 	select IMAGE_RENDERER
-	select BTHREAD
+	imply BTHREAD
 	imply INPUT
 	imply SOUND
 	help

@@ -12,9 +12,6 @@ struct bthread;
 
 extern struct bthread *current;
 
-struct bthread *bthread_create(void (*threadfn)(void *), void *data, const char *namefmt, ...);
-void bthread_cancel(struct bthread *bthread);
-
 void bthread_schedule(struct bthread *);
 void bthread_wake(struct bthread *bthread);
 void bthread_suspend(struct bthread *bthread);
@@ -44,9 +41,19 @@ bool bthread_is_main(struct bthread *bthread);
 })
 
 #ifdef CONFIG_BTHREAD
+struct bthread *bthread_create(void (*threadfn)(void *), void *data, const char *namefmt, ...);
 void bthread_reschedule(void);
+void bthread_cancel(struct bthread *bthread);
 #else
+static inline struct bthread *bthread_create(void (*threadfn)(void *), void *data, const char *namefmt, ...)
+{
+	threadfn(data);
+	return NULL;
+}
 static inline void bthread_reschedule(void)
+{
+}
+static inline void bthread_cancel(struct bthread *bthread)
 {
 }
 #endif

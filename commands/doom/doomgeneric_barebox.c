@@ -14,7 +14,7 @@
 #include <gui/gui.h>
 #include <gui/graphic_utils.h>
 #include <i_video.h>
-#include <bthread.h>
+#include <sched.h>
 #include <asm/setjmp.h>
 
 #include "doomgeneric.h"
@@ -169,7 +169,7 @@ extern int showfps;
 
 void DG_DrawFrame(void)
 {
-	bthread_reschedule();
+	resched();
 }
 
 void DG_SleepMs(uint32_t ms)
