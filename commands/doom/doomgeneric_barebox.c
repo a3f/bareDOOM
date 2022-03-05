@@ -109,7 +109,7 @@ static int DG_Init(void)
 
 	s_Fb.xres = info->xres;
 	s_Fb.yres = info->yres;
-	s_Fb.bits_per_pixel = info->bits_per_pixel;
+	s_Fb.bytes_per_pixel = info->bits_per_pixel / 8;
 
 	s_Fb.blue.length = info->blue.length;
 	s_Fb.green.length = info->green.length;

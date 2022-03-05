@@ -166,7 +166,7 @@ struct FB_ScreenInfo
 	uint32_t xres;			/* visible resolution		*/
 	uint32_t yres;
 
-	uint32_t bits_per_pixel;		/* guess what			*/
+	uint32_t bytes_per_pixel;	/* guess what			*/
 
 							/* >1 = FOURCC			*/
 	struct FB_BitField red;		/* bitfield in s_Fb mem if true color, */
