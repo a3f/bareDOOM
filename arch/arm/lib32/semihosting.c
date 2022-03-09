@@ -18,31 +18,6 @@
 #define O_BINARY	0
 #endif
 
-
-enum {
-	SEMIHOSTING_SYS_OPEN	= 0x01,
-	SEMIHOSTING_SYS_CLOSE	= 0x02,
-	SEMIHOSTING_SYS_WRITEC	= 0x03,
-	SEMIHOSTING_SYS_WRITE0	= 0x04,
-	SEMIHOSTING_SYS_WRITE	= 0x05,
-	SEMIHOSTING_SYS_READ	= 0x06,
-	SEMIHOSTING_SYS_READC	= 0x07,
-	/* SYS_ISERROR is not implemented  */
-	SEMIHOSTING_SYS_ISATTY	= 0x09,
-	SEMIHOSTING_SYS_SEEK	= 0x0a,
-	SEMIHOSTING_SYS_FLEN	= 0x0c,
-	SEMIHOSTING_SYS_REMOVE	= 0x0e,
-	SEMIHOSTING_SYS_RENAME	= 0x0f,
-	SEMIHOSTING_SYS_TIME	= 0x11,
-	SEMIHOSTING_SYS_ERRNO	= 0x13,
-	/* SYS_GET_CMDLINE is not implemented */
-	/* SYS_HEAPINFO is not implemented */
-	/* angel_SWIreason_ReportException is not implemented */
-	SEMIHOSTING_SYS_SYSTEM	= 0x12,
-};
-
-uint32_t semihosting_trap(uint32_t sysnum, void *addr);
-
 static uint32_t semihosting_flags_to_mode(int flags)
 {
 	static const int semihosting_open_modeflags[12] = {
