@@ -72,6 +72,9 @@ $(obj)/%.pbl: $(pbl-lds) $(BAREBOX_PBL_OBJS) $(obj)/piggy.o $(obj)/sha_sum.o FOR
 $(obj)/%.pblb: $(obj)/%.pbl FORCE
 	$(call if_changed,objcopy_bin,$(*F))
 	$(call cmd,check_file_size,$@,$(CONFIG_BAREBOX_MAX_IMAGE_SIZE))
+ifdef CONFIG_PBL_XIP
+	$(call cmd,check_reloc,--ignore=get_runtime_offset --ignore=.got $<)
+endif
 
 #
 # For each start symbol create three variables containing the

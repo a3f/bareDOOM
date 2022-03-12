@@ -501,6 +501,10 @@ quiet_cmd_check_file_size = CHKFILESIZE $2
 		exit 1 ;						\
 	fi;
 
+# Check relocations
+quiet_cmd_check_reloc = CHKREL  $@
+cmd_check_reloc = "${srctree}/scripts/check_reloc" $2
+
 quiet_cmd_imximage__S_dcd= DCD_S   $@
 cmd_imximage_S_dcd=						\
 (								\
