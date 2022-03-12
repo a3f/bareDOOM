@@ -1,0 +1,74 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use File::Basename;
+use Getopt::Long;
+
+my @ignore_syms;
+GetOptions ("ignore-symbol=s" => \@ignore_syms);
+
+my $file=shift;
+
+my $extract_symbol = dirname(__FILE__) . "/extract-symbol.pl";
+my $locate_symbol = dirname(__FILE__) . "/locate_symbol";
+
+my $reldyn = extract_symbol($file, '.rel.dyn');
+
+my $CROSS_COMPILE = $ENV{CROSS_COMPILE} // '';
+
+my %symbols;
+my ($got_start, $got_stop);
+
+for (`${CROSS_COMPILE}nm $file`) {
+        next unless /([[:xdigit:]]+)\s+\S+\s+(\S+)$/;
+
+	$symbols{$1} = $2;
+}
+
+my @ignore;
+
+for (@ignore_syms) {
+    my $ign = [split / /, locate_symbol($_, $file)];
+    push @ignore, $ign;
+    exit "error resolving $_\n" if @{$ign} != 2;
+}
+
+my @words = unpack ('L<*', $reldyn);
+
+my @wrong_relocs;
+
+RELOC: foreach my $i ( 0..$#words/2 ) {
+    my ($addr, $type) = @words[$i*2,$i*2+1];
+    foreach my $ign (@ignore) {
+	next RELOC if $ign->[0] <= $addr and $addr + 4 <= $ign->[0] + $ign->[1];
+    }
+
+    push @wrong_relocs, sprintf("%08x", $addr);
+}
+
+if (@wrong_relocs) {
+	warn "Disallowed relocations found in PBL:\n";
+
+	for (@wrong_relocs) {
+		print "\t$_";
+		print " ($symbols{$_})" if exists $symbols{$_};
+		print "\n";
+	}
+	exit 1;
+}
+
+sub extract_symbol {
+	my $out = `$extract_symbol @_`;
+	exit $? if $?;
+	chomp $out;
+	$out;
+}
+
+sub locate_symbol {
+	my $out = `$locate_symbol @_`;
+	exit $? if $?;
+	chomp $out;
+	$out;
+}
