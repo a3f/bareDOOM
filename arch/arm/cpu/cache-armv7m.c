@@ -10,6 +10,7 @@
 #include <asm/armv7m.h>
 #include <asm/system.h>
 #include <asm/io.h>
+#include <asm/cache.h>
 #include <linux/bitops.h>
 
 /* Cache maintenance operation registers */
@@ -279,7 +280,7 @@ static void invalidate_dcache_all(void)
 	}
 }
 
-void icache_invalidate(void)
+void v7m_invalidate_icache_all(void)
 {
 	writel(INVAL_ICACHE_POU, V7M_CACHE_REG_ICIALLU);
 
@@ -298,7 +299,7 @@ static void icache_enable(void)
 	if (icache_status())
 		return;
 
-	icache_invalidate();
+	v7m_invalidate_icache_all();
 	setbits_le32(&V7M_SCB->ccr, BIT(V7M_CCR_ICACHE));
 
 	/* Make sure cache action is effective for next memory access */
@@ -330,17 +331,17 @@ void v7m_mmu_cache_off(void)
 	invalidate_dcache_all();
 
 	icache_disable();
-	icache_invalidate();
+	v7m_invalidate_icache_all();
 }
 
 void v7m_mmu_cache_flush(void)
 {
 	flush_dcache_all();
-	icache_invalidate();
+	v7m_invalidate_icache_all();
 }
 
 void v7m_mmu_cache_invalidate(void)
 {
 	invalidate_dcache_all();
-	icache_invalidate();
+	v7m_invalidate_icache_all();
 }
