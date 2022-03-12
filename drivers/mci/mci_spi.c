@@ -438,6 +438,7 @@ static int spi_mci_probe(struct device_d *dev)
 
 	if (np) {
 		host->mci.devname = xstrdup(of_alias_get(np));
+		host->mci.disable_wp = of_property_read_bool(np, "disable-wp");
 		host->detect_pin = gpiod_get(dev, NULL, GPIOD_IN);
 	}
 
