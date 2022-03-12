@@ -57,6 +57,7 @@ enum filetype {
 	filetype_mxs_sd_image,
 	filetype_rockchip_rkns_image,
 	filetype_fip,
+	filetype_armv7m_barebox,
 	filetype_max,
 };
 
@@ -89,6 +90,7 @@ static inline bool file_is_compressed_file(enum filetype ft)
 
 #define ARM_HEAD_SIZE			0x30
 #define ARM_HEAD_MAGICWORD_OFFSET	0x20
+#define ARM_HEAD_TEXT_BASE		0x28
 #define ARM_HEAD_SIZE_OFFSET		0x2C
 
 #ifdef CONFIG_ARM

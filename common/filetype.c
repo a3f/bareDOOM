@@ -76,6 +76,7 @@ static const struct filetype_str filetype_str[] = {
 	[filetype_mxs_sd_image] = { "i.MX23/28 SD card image", "mxs-sd-image" },
 	[filetype_rockchip_rkns_image] = { "Rockchip boot image", "rk-image" },
 	[filetype_fip] = { "TF-A Firmware Image Package", "fip" },
+	[filetype_armv7m_barebox] = { "ARMv7-M barebox image", "armv7m-barebox" },
 };
 
 const char *file_type_to_string(enum filetype f)
@@ -360,8 +361,11 @@ enum filetype file_detect_type(const void *_buf, size_t bufsize)
 	if (buf[16] == 0x31305341)
 		return filetype_socfpga_xload;
 
-	if (is_barebox_arm_head(_buf))
+	if (is_barebox_arm_head(_buf)) {
+		if (!strncmp(&buf8[ARM_HEAD_MAGICWORD_OFFSET - 4], "V7-M", 4))
+			return filetype_armv7m_barebox;
 		return filetype_arm_barebox;
+	}
 	if (buf[9] == 0x016f2818 || buf[9] == 0x18286f01)
 		return filetype_arm_zimage;
 
@@ -472,6 +476,7 @@ bool filetype_is_barebox_image(enum filetype ft)
 {
 	switch (ft) {
 	case filetype_arm_barebox:
+	case filetype_armv7m_barebox:
 	case filetype_mips_barebox:
 	case filetype_ch_image:
 	case filetype_ch_image_be:
