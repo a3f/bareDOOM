@@ -44,7 +44,7 @@ static void setup_dram(void)
 	stm32f42x_pll_init(8);
 
 	rcc_gpio_clock_enable();
-	rcc_periph_clock_enable(RCC_FMC);
+	rcc_fmc_clock_enable();
 	sdram_gpio_setup();
 
 	stm32f_init_sdram(&stm32f429_disco_sdram_params);
