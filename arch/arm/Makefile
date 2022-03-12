@@ -157,6 +157,10 @@ else
 LDFLAGS_pbl += -static
 endif
 
+ifdef CONFIG_PBL_XIP
+PBL_CPPFLAGS += -fPIC -mno-pic-data-is-text-relative -msingle-pic-base -mpic-register=r9
+endif
+
 KBUILD_BINARY := barebox.bin
 
 barebox.s5p: $(KBUILD_BINARY)

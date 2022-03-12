@@ -53,6 +53,7 @@ SECTIONS
 	_etext = .;			/* End of text and rodata section */
 
 	. = ALIGN(4);
+	.__rwdata_start : { *(.__rwdata_start) }
 	.data : { *(.data*) }
 
 	. = ALIGN(4);
@@ -74,12 +75,19 @@ SECTIONS
 	.dynsym : { *(.dynsym) }
 	.__dynsym_end : { *(.__dynsym_end) }
 
+	.__got_start :  { *(.__got_start) }
+	.got : { *(.got*) }
+	.__got_stop :  { *(.__got_stop) }
+
 	pbl_code_size =  . - BASE;
 
 	. = ALIGN(4);
 	.__bss_start :  { *(.__bss_start) }
 	.bss : { *(.bss*) }
 	.__bss_stop :  { *(.__bss_stop) }
+
+	.__rwdata_stop : { *(.__rwdata_stop) }
+
 	_end = .;
 
 	pbl_memory_size =  . - BASE;

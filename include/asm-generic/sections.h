@@ -5,6 +5,8 @@
 
 extern char _text[], _stext[], _etext[];
 extern char __bss_start[], __bss_stop[];
+extern char __got_start[], __got_stop[];
+extern char __rwdata_start[], __rwdata_stop[];
 extern char _sdata[], _edata[];
 extern char __bare_init_start[], __bare_init_end[];
 extern char _end[];

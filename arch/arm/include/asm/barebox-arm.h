@@ -36,7 +36,10 @@ unsigned long get_runtime_offset(void);
  */
 static inline unsigned long global_variable_offset(void)
 {
-#ifdef CONFIG_CPU_V8
+#ifdef CONFIG_PBL_XIP
+	/* accesses are GOT-relative, so no offset needed */
+	return 0;
+#elif defined(CONFIG_CPU_V8)
 	unsigned long text;
 
 	__asm__ __volatile__(
