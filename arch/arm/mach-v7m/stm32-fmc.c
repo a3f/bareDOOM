@@ -120,8 +120,6 @@ static int stm32_init_fmc(struct stm32_fmc_regs __iomem *regs,
 	u32 ctb; /* SDCMR register: Command Target Bank */
 	u32 ref_count;
 
-	//barebox_rcc_periph_clock_enable(RCC_FMC);
-
 	control = &bank_params->sdram_control;
 	timing = &bank_params->sdram_timing;
 	target_bank = bank_params->target_bank;
