@@ -1,3 +1,7 @@
 #
 # barebox image generation Makefile for ARM Cortex-M
 #
+
+pblb-$(CONFIG_MACH_STM32F429_DISCO) += start_stm32f429_disco
+FILE_barebox-stm32f429-disco.img = start_stm32f429_disco.pblb
+image-$(CONFIG_MACH_STM32F429_DISCO) += barebox-stm32f429-disco.img

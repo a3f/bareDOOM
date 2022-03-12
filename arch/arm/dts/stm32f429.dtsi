@@ -1,79 +1,16 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later OR MIT */
 
-#include <arm/armv7-m.dtsi>
+#include "armv7-m.dtsi"
 
 / {
 	aliases {
-		gpio0 = &gpioa;
-		gpio1 = &gpiob;
-		gpio2 = &gpioc;
-		gpio3 = &gpiod;
-		gpio4 = &gpioe;
-		gpio5 = &gpiof;
-		gpio6 = &gpiog;
-		gpio7 = &gpioh;
-		gpio8 = &gpioi;
-		gpio9 = &gpioj;
-		gpio10 = &gpiok;
+		mmc0 = &sdio;
 	};
 
-	clocks {
-		rcc_apb2: rcc_apb2 {
-			#clock-cells = <0>;
-			compatible = "fixed-clock";
-			clock-frequency = <90000000>;
+	soc {
+		flash: flash@8000000 {
+			compatible = "mtd-rom";
+			reg = <0x8000000 0x200000>;
 		};
 	};
-};
-
-&gpioa {
-	clocks = <&rcc_apb2>;
-};
-
-&gpiob {
-	clocks = <&rcc_apb2>;
-};
-
-&gpioc {
-	clocks = <&rcc_apb2>;
-};
-
-&gpiod {
-	clocks = <&rcc_apb2>;
-};
-
-&gpioe {
-	clocks = <&rcc_apb2>;
-};
-
-&gpiof {
-	clocks = <&rcc_apb2>;
-};
-
-&gpiog {
-	clocks = <&rcc_apb2>;
-};
-
-&gpioh {
-	clocks = <&rcc_apb2>;
-};
-
-&gpioi {
-	clocks = <&rcc_apb2>;
-};
-
-&gpioj {
-	clocks = <&rcc_apb2>;
-};
-
-&gpiok {
-	clocks = <&rcc_apb2>;
-};
-
-&timer5 {
-	clocks = <&rcc_apb2>;
-};
-
-&usart1 {
-	clocks = <&rcc_apb2>;
 };

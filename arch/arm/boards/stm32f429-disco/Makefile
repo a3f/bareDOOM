@@ -1,1 +1,1 @@
-lwl-y += lowlevel.o lowlevel_init.o
+lwl-y += lowlevel.o

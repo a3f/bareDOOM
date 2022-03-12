@@ -3,24 +3,91 @@
 #include <arm/stm32f429-disco.dts>
 #include "stm32f429.dtsi"
 
-&systick {
-	clock-frequency = <22500000>;
-	status = "okay";
+/ {
+	model = "STM32F429i-DISCO";
+
+	gpio-keys {
+		button-0 {
+			linux,code = <KEY_ENTER>;
+		};
+	};
 };
 
 &spi5 {
-	status = "okay";
-	pinctrl-0 = <&spi5_pins>;
-	pinctrl-names = "default";
-	#address-cells = <1>;
-	#size-cells = <0>;
 	cs-gpios = <&gpioc 1 GPIO_ACTIVE_LOW>, <&gpioc 2 GPIO_ACTIVE_LOW>,
 		   <&gpioc 3 GPIO_ACTIVE_LOW>;
 
-	mmc@0 {
+	mmc@2 {
 		compatible = "mmc-spi-slot";
-		reg = <0>;
-		spi-max-frequency = <10000000>;
+		reg = <2>;
+		spi-max-frequency = <400000>;
 		disable-wp;
+	};
+
+};
+
+&l3gd20 {
+	status = "okay";
+};
+
+&display {
+	status = "okay";
+};
+
+&rcc {
+	assigned-clocks = <&rcc 0 STM32F4_AHB1_CLOCK(OTGHS)>;
+	assigned-clock-parents = <&rcc 1 STM32F4_AHB1_CLOCK(OTGHS)>;
+};
+
+&spi5_pins {
+	pins1 {
+		pinmux = <STM32_PINMUX('F', 7, AF5)>,
+			/* SPI5_CLK */
+			 <STM32_PINMUX('F', 9, AF5)>;
+			/* SPI5_MOSI */
+		bias-disable;
+		drive-push-pull;
+		slew-rate = <2>;
+	};
+	pins2 {
+		pinmux = <STM32_PINMUX('F', 8, AF5)>;
+			/* SPI5_MISO */
+		bias-pull-up;
+		slew-rate = <2>;
+	};
+};
+
+&sdio {
+	pinctrl-names = "default", "opendrain";
+	pinctrl-0 = <&sdio_pins>;
+	pinctrl-1 = <&sdio_pins_od>;
+	max-frequency = <12500000>;
+	bus-width = <1>;
+	no-cd;
+	status = "okay";
+};
+
+&sdio_pins {
+	pins {
+		pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
+			 <STM32_PINMUX('C', 12, AF12)>, /* SDIO_CK */
+			 <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
+		drive-push-pull;
+		slew-rate = <2>;
+	};
+};
+
+&sdio_pins_od {
+	pins1 {
+		pinmux = <STM32_PINMUX('C', 8, AF12)>, /* SDIO_D0 */
+			 <STM32_PINMUX('C', 12, AF12)>; /* SDIO_CK */
+		drive-push-pull;
+		slew-rate = <2>;
+	};
+
+	pins2 {
+		pinmux = <STM32_PINMUX('D', 2, AF12)>; /* SDIO_CMD */
+		drive-open-drain;
+		slew-rate = <2>;
 	};
 };

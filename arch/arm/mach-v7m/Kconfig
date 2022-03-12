@@ -6,4 +6,9 @@ config ARCH_STM32MCU
 	bool
 	select ARCH_STM32
 
+config MACH_STM32F429_DISCO
+	bool "STM32F429 Discovery Development Board"
+	select ARCH_STM32MCU
+
+
 endif
