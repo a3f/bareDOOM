@@ -40,6 +40,7 @@ DEFINE_CPU_FNS(v4)
 DEFINE_CPU_FNS(v5)
 DEFINE_CPU_FNS(v6)
 DEFINE_CPU_FNS(v7)
+DEFINE_CPU_FNS(v7m)
 
 void __dma_clean_range(unsigned long start, unsigned long end)
 {
@@ -109,6 +110,11 @@ int arm_set_cache_functions(void)
 		cache_fns = &cache_fns_armv7;
 		break;
 #endif
+#ifdef CONFIG_CPU_32v7M
+	case CPU_ARCH_ARMv7M:
+		cache_fns = &cache_fns_armv7m;
+		break;
+#endif
 	default:
 		while(1);
 	}
@@ -146,10 +152,16 @@ void arm_early_mmu_cache_flush(void)
 		v7_mmu_cache_flush();
 		return;
 #endif
+#ifdef CONFIG_CPU_32v7M
+	case CPU_ARCH_ARMv7M:
+		v7m_mmu_cache_flush();
+		return;
+#endif
 	}
 }
 
 void v7_mmu_cache_invalidate(void);
+void v7m_mmu_cache_invalidate(void);
 
 void arm_early_mmu_cache_invalidate(void)
 {
@@ -166,6 +178,11 @@ void arm_early_mmu_cache_invalidate(void)
 #ifdef CONFIG_CPU_32v7
 	case CPU_ARCH_ARMv7:
 		v7_mmu_cache_invalidate();
+		return;
+#endif
+#ifdef CONFIG_CPU_32v7M
+	case CPU_ARCH_ARMv7M:
+		v7m_mmu_cache_invalidate();
 		return;
 #endif
 #endif

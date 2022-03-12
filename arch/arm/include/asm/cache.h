@@ -9,6 +9,9 @@ void v8_invalidate_dcache_all(void);
 void v8_flush_dcache_range(unsigned long start, unsigned long end);
 void v8_inv_dcache_range(unsigned long start, unsigned long end);
 
+#ifdef CONFIG_CPU_32v7M
+void icache_invalidate(void);
+#else
 static inline void icache_invalidate(void)
 {
 #if __LINUX_ARM_ARCH__ <= 7
@@ -17,6 +20,7 @@ static inline void icache_invalidate(void)
 	v8_invalidate_icache_all();
 #endif
 }
+#endif
 
 int arm_set_cache_functions(void);
 

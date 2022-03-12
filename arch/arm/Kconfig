@@ -207,9 +207,11 @@ config ARCH_STM32MP
 
 config ARCH_V7M
 	bool "V7-M (Cortex-M) MCUs (STM32)"
-	select CPU_V7M
+	select CPU_32v7M
 	select THUMB2_BAREBOX
+	select HAVE_MACH_ARM_HEAD
 	select HAVE_PBL_MULTI_IMAGES
+	select PBL_XIP
 	select CLKDEV_LOOKUP
 	select COMMON_CLK
 	select COMMON_CLK_OF_PROVIDER
@@ -217,7 +219,9 @@ config ARCH_V7M
 	select GPIOLIB
 	select ARCH_HAS_RESET_CONTROLLER
 	select ARM_AMBA
+	select HAVE_CONFIGURABLE_MEMORY_LAYOUT
 	select ARM_USE_COMPRESSED_DTB
+	select MPU
 
 config ARCH_VERSATILE
 	bool "ARM Versatile boards (ARM926EJ-S)"
@@ -369,7 +373,7 @@ config THUMB2_BAREBOX
 	select ARM_ASM_UNIFIED
 	select AEABI
 	depends on !ARCH_TEGRA && !ARCH_AT91
-	depends on CPU_V7 && !CPU_32v4T && !CPU_32v5 && !CPU_32v6
+	depends on (CPU_V7 || CPU_32v7M) && !CPU_32v4T && !CPU_32v5 && !CPU_32v6
 	bool "Compile barebox in thumb-2 mode (read help)"
 	help
 	  This enables compilation of barebox in thumb-2 mode which generates
@@ -431,11 +435,14 @@ config ARM_OPTIMZED_STRING_FUNCTIONS
 	# on the inputs in may fail with Alignement exception if used
 	# without MMU
 	#
-	depends on !CPU_V8 || MMU
+	depends on (!CPU_V8 || MMU) && !CPU_32v7M
 	help
 	  Say yes here to use assembler optimized memcpy / memset functions.
 	  These functions work much faster than the normal versions but
 	  increase your binary size.
+
+config MPU
+	bool
 
 config ARM_EXCEPTIONS
 	select ARCH_HAS_DATA_ABORT_MASK

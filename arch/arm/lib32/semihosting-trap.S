@@ -15,6 +15,10 @@ ENTRY(semihosting_trap)
 	@ In supervisor mode SVC would clobber LR
 	push	{lr}
 	ARM(	svc	#0x123456	)
+#ifdef CONFIG_ARCH_V7M /* Not valid for Cortex-M4 */
+	THUMB(	bkpt	#0xAB		)
+#else
 	THUMB(	svc	#0xAB		)
+#endif
 	pop	{pc}
 ENDPROC(semihosting_trap)

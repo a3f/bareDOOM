@@ -4,8 +4,9 @@ obj-y += cpu.o
 
 obj-$(CONFIG_ARM_EXCEPTIONS) += exceptions$(S64).o interrupts$(S64).o
 obj-$(CONFIG_MMU) += mmu$(S64).o mmu-common.o
-obj-pbl-y += lowlevel$(S64).o
+
 obj-pbl-$(CONFIG_MMU) += mmu-early$(S64).o
+obj-pbl-$(CONFIG_MPU) += mpu-early.o
 obj-pbl-$(CONFIG_CPU_32v7) += hyp.o
 AFLAGS_hyp.o :=-Wa,-march=armv7-a -Wa,-mcpu=all
 AFLAGS_hyp.pbl.o :=-Wa,-march=armv7-a -Wa,-mcpu=all
@@ -16,14 +17,25 @@ KASAN_SANITIZE_start.o := n
 pbl-$(CONFIG_BOARD_ARM_GENERIC_DT) += board-dt-2nd.o
 pbl-$(CONFIG_BOARD_ARM_GENERIC_DT_AARCH64) += board-dt-2nd-aarch64.o
 
-obj-pbl-y += setupc$(S64).o cache$(S64).o
+obj-pbl-y += cache$(S64).o
+obj-y += setupc$(S64).o
+
+ifeq ($(CONFIG_PBL_XIP),y)
+pbl-y += setupc-xip.o
+else
+pbl-y += setupc$(S64).o
+endif
 
 obj-$(CONFIG_ARM_PSCI_CLIENT) += psci-client.o
 
 #
 # Any variants can be called as start-armxyz.S
 #
+ifeq ($(CONFIG_CPU_32v7M),)
+obj-pbl-y += lowlevel$(S64).o
 obj-$(CONFIG_CMD_ARM_CPUINFO) += cpuinfo.o
+endif
+
 obj-$(CONFIG_CMD_ARM_MMUINFO) += mmuinfo.o
 obj-$(CONFIG_OFDEVICE) += dtb.o
 
@@ -45,6 +57,9 @@ obj-pbl-$(CONFIG_CPU_32v6) += cache-armv6.o
 obj-pbl-$(CONFIG_CPU_32v7) += cache-armv7.o
 AFLAGS_cache-armv7.o       :=-Wa,-march=armv7-a
 AFLAGS_cache-armv7.pbl.o   :=-Wa,-march=armv7-a
+obj-pbl-$(CONFIG_CPU_32v7M) += cache-armv7m.o
+AFLAGS_cache-armv7m.o       :=-Wa,-march=armv7-m
+AFLAGS_cache-armv7m.pbl.o   :=-Wa,-march=armv7-m
 obj-$(CONFIG_CACHE_L2X0) += cache-l2x0.o
 obj-pbl-$(CONFIG_CPU_64v8) += cache-armv8.o
 AFLAGS_cache-armv8.o       :=-Wa,-march=armv8-a

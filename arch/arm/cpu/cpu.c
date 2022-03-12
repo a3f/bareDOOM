@@ -61,7 +61,7 @@ struct outer_cache_fns outer_cache;
 
 static void disable_interrupts(void)
 {
-#if __LINUX_ARM_ARCH__ <= 7
+#if __LINUX_ARM_ARCH__ <= 7 && !defined(CONFIG_CPU_32v7M)
 	uint32_t r;
 
 	/*

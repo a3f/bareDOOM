@@ -16,6 +16,7 @@
 #define CPU_ARCH_ARMv6		8
 #define CPU_ARCH_ARMv7		9
 #define CPU_ARCH_ARMv8		10
+#define CPU_ARCH_ARMv7M		11
 
 #define CPU_IS_ARM720		0x41007200
 #define CPU_IS_ARM720_MASK	0xff00fff0
@@ -96,7 +97,7 @@
 #define cpu_is_arm1176()	(0)
 #endif
 
-#ifdef CONFIG_CPU_32v7
+#if defined(CONFIG_CPU_32v7)
 #ifdef ARM_ARCH
 #define ARM_MULTIARCH
 #else
@@ -113,6 +114,14 @@
 #define cpu_is_cortex_a9() (0)
 #define cpu_is_cortex_a7() (0)
 #define cpu_is_cortex_a15() (0)
+#endif
+
+#if defined(CONFIG_CPU_32v7M)
+#ifdef ARM_ARCH
+#error "ARMv7-M multi-arch unsupported"
+#else
+#define ARM_ARCH CPU_ARCH_ARMv7M
+#endif
 #endif
 
 #ifdef CONFIG_CPU_64v8

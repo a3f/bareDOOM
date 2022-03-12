@@ -122,6 +122,10 @@ config CPU_32v7
 	bool
 	select CPU_32
 
+config CPU_32v7M
+	bool
+	select CPU_32
+
 config CPU_64v8
 	bool
 	select CPU_64
