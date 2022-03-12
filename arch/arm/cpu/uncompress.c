@@ -23,6 +23,11 @@
 
 #include "entry.h"
 
+#ifndef DEBUG
+#undef pr_debug
+#define pr_debug(str, ...) barrier_data(str)
+#endif
+
 #ifndef CONFIG_HAVE_PBL_MULTI_IMAGES
 
 void start_pbl(void);
