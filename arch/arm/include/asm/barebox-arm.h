@@ -185,6 +185,7 @@ static inline unsigned long arm_mem_barebox_image(unsigned long membase,
 #define __ARM_SETUP_STACK(stack_top) if (stack_top) arm_setup_stack(stack_top)
 #endif
 
+#ifndef ENTRY_FUNCTION_WITHSTACK
 /*
  * Unlike ENTRY_FUNCTION, this can be used to setup stack for a C entry
  * point on both ARM32 and ARM64. ENTRY_FUNCTION on ARM64 can only be used
@@ -207,8 +208,10 @@ static inline unsigned long arm_mem_barebox_image(unsigned long membase,
 		}							\
 		static void noinline __##name				\
 			(ulong arg0, ulong arg1, ulong arg2)
+#endif
 
 
+#ifndef ENTRY_FUNCTION
 #define ENTRY_FUNCTION(name, arg0, arg1, arg2)				\
 	void name(ulong r0, ulong r1, ulong r2);			\
 									\
@@ -223,6 +226,7 @@ static inline unsigned long arm_mem_barebox_image(unsigned long membase,
 		}							\
 		static void NAKED noinline __##name			\
 			(ulong arg0, ulong arg1, ulong arg2)
+#endif
 
 /*
  * When using compressed images in conjunction with relocatable images
